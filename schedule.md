@@ -1,6 +1,9 @@
-# Szakdolgozat ütemterv
+Szakdolgozat ütemterv
+================================================================================
 
-## Október
+Október
+--------------------------------------------------------------------------------
+
 
 ### 29 - 31
 
@@ -13,7 +16,9 @@ Az ütemterv készítése, közben az ágens fejlesztése. Kitűzött célok:
 * Néhány feature kiszámítása a játékról
 
 
-## November
+November
+--------------------------------------------------------------------------------
+
 
 ### 1 - 6
 
@@ -25,6 +30,7 @@ formában
 * Ellenfélmodellező kidolgozása, libraryk keresése, beépítése
 
 * Játékadatok gyűjtése, ellenfelek kiválasztása a teszteléshez
+
 
 ### 7 - 13
 
@@ -39,6 +45,9 @@ eredmények összegzése
 
 * Eredmények összegzése
 
+* Az ágens képes legyen létrehozni, és tárolni modelleket adott ellenfélhez 
+
+
 ### 14 - 20
 
 MCTS döntéshozó implementálása, hangolása
@@ -49,17 +58,29 @@ MCTS döntéshozó implementálása, hangolása
 * A modell illesztése az MCTS algoritmushoz: Dummy ellenfélmodell segítségével
   a rollout működjön
 
+
 ### 21 - 27
 
 A döntéshozó és az ellenfélmodell integrálása
 
+* A döntéshozó a játék megfelelő állapotaiban már az ellenfélmodellezőhöz
+  forduljon
+
+* Az MCTS algoritmus hangolása, tesztek elvégzése a kész ágenssel
+
+* Eredmények rögzítése
+
 
 ### 28 - 30
 
-Esetleges hibák javítása.
+Esetleges lemaradás behozása, hibák javítása.
+
+* Teljesítmény optimizálása, ha van rá idő (ez az MCTS algoritmus futásidejét
+  fogja érinteni főleg)
 
 
-## December
+December
+--------------------------------------------------------------------------------
 
 ### 1 - 9
 
