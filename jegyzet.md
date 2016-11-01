@@ -1,23 +1,25 @@
-### Szakdolgozat jegyzet
+---
+title: Számítógépes póker intelligens ágensekkel
+author: Sőre András
+bibliography: bibliography.bib
+---
 
-#### Irodalom
-
-* Davidson - Opponent Modeling in Poker
-*
 
 #### Featurek a játék állapotáról
 
-Davidson - 42. oldal
+A featurek egy része a Poki által használtakból került ki [@davidson, page 42].
 
 * Board featurek - ?
 
-* Pot odds
+* Pot odds - [@davidson, page 27]
 
-* Commited
+* Commited - aktuális játékos befektetett már pénzt
 
-* Bets to call
+* Bets to call - aktuális játékosnak hány tétet kell megadnia
 
-* Round
+* Last action - bet vagy raise volt az előző lépése a játékosnak
+
+* Stage - aktuális kör
 
 * Játékosok
 

@@ -9,11 +9,10 @@ Október
 
 Az ütemterv készítése, közben az ágens fejlesztése. Kitűzött célok:
 
-* Asztal, játékosok számon tartása
+* Az ellenfélmodellezéshez szükséges fejlesztések: a szerver támogassa a játék
+  felől érkező események feldolgozását, pl emelések, játékosok lapjai
 
-* Emelések, megadások helyes kezelése
-
-* Néhány feature kiszámítása a játékról
+* Néhány feature kiszámítása a játékról az előbbiek segítségével
 
 
 November
@@ -45,7 +44,7 @@ eredmények összegzése
 
 * Eredmények összegzése
 
-* Az ágens képes legyen létrehozni, és tárolni modelleket adott ellenfélhez 
+* Az ágens képes legyen létrehozni, és tárolni modelleket adott ellenfélhez
 
 
 ### 14 - 20
