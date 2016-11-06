@@ -45,9 +45,11 @@ Cselekvés előrejelzésére: előrecsatolt MLP ellenfélmodell
 
 # Ágens megvalósítása
 
+## A felhasznált keretrendszer
+
+## Ágens architektúrája
+
 ## Ellenfélmodellezés kidolgozása
-
-
 
 ### Featurek a játék állapotáról
 
@@ -69,6 +71,8 @@ A featurek egy része a Poki által használtakból került ki
 * ...
 
 ## Döntéshozás
+
+### MCTS algoritmus
 
 # Eredmények értékelése
 
