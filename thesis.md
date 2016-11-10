@@ -90,7 +90,7 @@ Double:
 
 * becsült kézerősség
 
-* becsült potenciál
+* becsült hand potential
 
 
 Bool:
