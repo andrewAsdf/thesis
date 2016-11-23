@@ -19,11 +19,16 @@ date: 2016
 # A számítógépes póker összefoglalása
 <!-- 3 oldal -->
 
-Requirements of a computer poker player [@billings1998opponent, page 2-4]
+Requirements of a computer poker player [@billings1998opponent]
 
-* Hand strength
+* Hand strength [@davidson2002opponent, page 21]
+    - annak a valószínűsége, hogy a mi
+      kezünk nyer.
+    - RHS/HR - véletlenszerű kezek ellen
+    - súlyozni lehet a számolást (ez lesz a súlytáblás módszer)
 
-* Hand potential
+* Hand potential [@davidson2002opponent, page 22]
+    - A valószínűsége, hogy a kezünk javulni fog (nem mond mértéket!)
 
 * Bluffing
 
@@ -68,12 +73,34 @@ ellentétben nem súlyozza a játékfa csúcsait
 
 ## A felhasznált keretrendszer
 <!-- 4 oldal -->
+- PokerAcademy előnyök:
+  - Meglévő, bizonyított ágensek
+  - GUI
+  - Statisztikák
+  - Ismeretség
+  - Nehéz debugolás
+  - Régi java
+
+- OpenTestbed 
+  - Opensource
+  - Debugolás könnyebb
+  - Java újabb
+  - Ágensek limitáltak
 
 ## Ágens architektúrája
 <!-- 4 oldal -->
+- Meglévő ágensek használata, portolás
+- Kliens/szerver architektúra használata
 
 ## Ellenfélmodellezés megvalósítása
 <!-- 4 oldal -->
+Poki féle neurális háló, saját választott featurekkel. Kézrange becslése:
+játszott játékok
+
+### Featurek a játék állapotáról
+
+A featurek egy része a Poki által használtakból került ki
+[@davidson2002opponent, page 42].
 
 Megoldás az ellenfelek cselekvéseinek kiszámítására:
 
@@ -118,12 +145,12 @@ Adott játékonként a játékokat az ellenfélmodellező feldolgozza a követke
   lehet venni, például az adott ellenfél kézerősségének becslésénél, ami
   szintén lehetne feature.
 
-- A featurek egy neurális háló által betanításra kerülnek, ahol a kimenet a
-  végzett cselekvés a játék adott állapotában. A modelleket játékosszinten
-  lehet tárolni, viszont   hatékony megoldás lehet az is, hogy asztal/játékos
-  bontásban készülne egy-egy modell. Így a rendszer automatikusan alkalmazkodna
-  a különböző játékoshalmazokhoz. Hátránya persze, hogy minden halmazhoz újabb
-  betanítást igényelne.
+#### Ellenfélspecifikus:
+
+* becsült kézerősség
+
+* becsült hand potential
+
 
 A játékosok lapeloszlásának megbecsülése:
 
@@ -135,41 +162,28 @@ következtethetünk a kezdő lapok erősségére.
 
 ### Gépi tanulás használata
 
-### Featurek a játék állapotáról
+A featurek egy neurális háló által betanításra kerülnek, ahol a kimenet a
+végzett cselekvés a játék adott állapotában. A modelleket játékosszinten
+lehet tárolni, viszont   hatékony megoldás lehet az is, hogy asztal/játékos
+bontásban készülne egy-egy modell. Így a rendszer automatikusan alkalmazkodna
+a különböző játékoshalmazokhoz. Hátránya persze, hogy minden halmazhoz újabb
+betanítást igényelne.
 
-A featurek egy része a Poki által használtakból került ki
-[@davidson2002opponent, page 42].
+- Előrecsatolt neurális háló
 
-Double:
+- scikit-learn
 
-* Pot odds - [@davidson2002opponent, page 27]
 
-* Pozíció - (játékosok száma - sorszám) / játékosok száma
+### Kísérletek
 
-Bool:
+Kezdetben a tábla állapotát felhasználó feature nem készült. 1000 mintapontot
+felhasználva, a Jagbotok játékából történt a teszt.
 
-* Commited - aktuális játékos befektetett már pénzt
+A pontosság: ~60%
 
-* Last action - bet vagy raise volt az előző lépése a játékosnak
+Todo: megvizsgálni pontok számának növelésével
 
-* Stage - turn
-
-* Stage - river
-
-Int:
-
-* Bets to call - aktuális játékosnak hány tétet kell megadnia / max betek száma
-
-???:
-
-* Board texture
-
-#### Ellenfélspecifikus:
-
-* becsült kézerősség
-
-* becsült hand potential
-
+Táblázat: f/c/r * f/c/r százalékok [@davidson2000improved]
 
 
 ## Döntéshozás
@@ -185,3 +199,7 @@ Poki, Loki döntéshozása pl.
 
 # Eredmények értékelése
 <!-- 5 oldal -->
+## Tesztkonfigurációk
+
+ - Jagbot - statikus, kezdőknek való főleg
+   4 db Jagbot, plusz az ágens, 150 db játék
