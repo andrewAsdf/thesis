@@ -61,6 +61,10 @@ Hand strength, hand potential, EHS alapján formula, [@davidson2002opponent, p.
 
 #### Poki
 
+architektúra [@billings2002challenge, p. 209]
+
+action table - actionokok százalékos aránya
+
 Cselekvés előrejelzésére: előrecsatolt MLP ellenfélmodell
 [@davidson2000improved, page 3]
 
@@ -81,7 +85,7 @@ ellentétben nem súlyozza a játékfa csúcsait
   - Nehéz debugolás
   - Régi java
 
-- OpenTestbed 
+- OpenTestbed
   - Opensource
   - Debugolás könnyebb
   - Java újabb
@@ -181,10 +185,39 @@ felhasználva, a Jagbotok játékából történt a teszt.
 
 A pontosság: ~60%
 
-Todo: megvizsgálni pontok számának növelésével
+TODO: megvizsgálni pontok számának variálásával.
 
-Táblázat: f/c/r * f/c/r százalékok [@davidson2000improved]
+Layer sizes       Score
+-------------  --------
+[5, 5]         0.62649
+[7, 5]         0.63168
+[15, 12]       0.649942
+[20, 17]       0.678008
+[15, 12, 10]   0.654171
+[30, 25]       0.678585
 
+
+Egy pontig növekedést érhetünk el a neuronok számának növelésével.
+
+- Konfúziós mátrix [@davidson2000improved]: ez a metrika megmutatja, hogy a
+  prediktorunk milyen típusú hibákat produkál. Az osztályozások eloszlása
+  látható rajta az elvárt, és a tényleges válaszok kombinációira vetítve.
+
+Az alábbi mátrixot kaptam teszteléskor (1800 tanítópont, 200 tesztpont, 1 adott
+ellenfélre):
+
+Act\Pred      Fold    Call    Raise
+----------  ------  ------  -------
+Fold          0.24    0.02     0.00
+Call          0.08    0.33     0.05
+Raise         0.06    0.11     0.10
+
+Látható, hogy az ellenfélmodell a bedobást és a megadást tudja jobb
+valószínűséggel megbecsülni. Az emeléseket arányaiban többször osztályozta
+félre a háló.
+
+Több mátrixot is vizsgálva, egyértelmű volt, hogy a jelenlegi ellenfélmodell az
+emeléseket nem azonosítja elég hatékonyan.
 
 ## Döntéshozás
 <!-- 4 oldal -->
