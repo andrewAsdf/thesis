@@ -4,14 +4,95 @@ author: Sőre András
 bibliography: bibliography.bib
 csl: iso690-numeric-en.csl
 date: 2016
----
+margin-left: 2.5cm
+margin-right: 2.5cm
+fontsize: 12pt
+...
 
-# Feladatkiírás/Címoldal/Tartalomjegyzék/Nyilatkozat
 
-# Kivonat/Abstract
+<!--
+Feladatkiírás/Címoldal/Tartalomjegyzék/Nyilatkozat
+Bevezetés                               1
+A póker szabályai                       3
+A számítógépes póker összefoglalása     3
+Opponent Modeling                       10
+Ágens megvalósítása
+A felhasznált keretrendszer             4
+Ágens architektúrája                    4
+Ellenfélmodellezés megvalósítása        4
+Gépi tanulás használata                 (2-3)
+Featurek a játék állapotáról            (2-3)
+Döntéshozás                             4
+MCTS algoritmus                         (4)
+Eredmények értékelése                   5
+Irokdalom                                1
+Függelék
+-->
 
-# Bevezetés
+Kivonat/Abstract
+================
+
 <!-- 1 oldal -->
+
+Bevezetés
+=========
+<!--
+- kiírás elemzése
+- előzmények
+- motiváció
+- megoldások
+- saját megoldás
+-->
+
+<!-- 1 oldal -->
+A számítógépes póker a mesterséges intelligencia egy régóta kutatott területe.
+A játék tulajdonságai alkalmassá teszik arra, hogy számos algoritmust és
+módszert lehessen vizsgálni ellenőrzött, reprodukálható körülmények között.
+
+Azért választottam ezt a témát, mert régebben hobbiszinten én is pókereztem
+internetes pókertermekben, így felkeltette az érdeklődésemet, hogy ezt a
+játékot számítógép is végezheti, ráadásul sokszor hatékonyabban, mint profi
+emberi játékosok.
+Annak ellenére, hogy a témakörben már rengeteg kutatást csináltak, egy
+pókerágens tervezése és fejlesztése még mindig egy összetett feladat, rengeteg
+megoldandó problémával.
+
+A terület egyik legnagyobb művelője a kanadai University of Albertán működő
+Computer Poker Research Group (CRPG), akik már a kilencvenes évek közepétől
+foglalkoznak a témával, és rengeteg publikációt adtak ki róla. A kutatáson
+kívül versenyek is léteznek, ahol számítógépes pókerágensek mérhetik össze
+tudásukat: a leghíresebb az Annual Computer Poker Competition, amelyet 2006-ban
+tartottak először, és évente szervezik, különböző kategóriákban.
+
+Az évek során számos ágenst fejlesztettek ki. A kezdeti próbálkozásokhoz képest
+mára ott tartunk, hogy a CRPG "megoldotta" az általam is választott
+pókerfajtát, azaz a legújabb játékosuk már gyakorlatilag tökéletesen játszik.
+[@CepheusP8:online] Az általuk készített ágensek forrása nem nyílt, viszont a
+tanulmányokból vázlatos képet kaphatunk a működésükről.
+
+A saját munkám során a vizsgált pókerfajta, és a tesztkörnyezet kiválasztása
+után olyan megoldásra törekedtem, ami felhasználja a gépi tanulást valamilyen
+formában, valamint elég egyszerű ahhoz, hogy a félév során működőképes ágens
+legyen az eredmény. Ennek megfelelően a korábban önálló labormunka keretében
+tervezett ágens architektúráját használtam fel, ahol az ellenfél viselkedésének
+modellezését egy neurális háló végzi, valamint az ágens döntéseit a viszonylag
+egyszerű MCTS algoritmus segítségével állítom elő.
+
+A dolgozat elején bemutatom a pókerjátékot, valamint általam választott
+pókerfajtát, a Limit Texas Hold'emet, kitérve annak a számítógépes póker
+szempontjából lényeges aspektusaira, utána magát a számítógépes pókert, mint
+területet mutatom be, a fontosabb tulajdonságaira, megoldadó kérdésekre kitérve.
+
+Külön szót ejtek még az ellenfél modellezésének kérdéseiről, valamint a
+meglévő megoldásokról aszerint, hogy hogyan tudnak az egyes részproblémákra
+választ adni.
+
+Ezek után a saját ágensem architektúráját fogom ismertetni, a rendszerterven
+kívül a megvalósítás részleteivel együtt, kitérve az ellenfélmodellezésre, és a
+döntéshozásra is. <!-- todo: tesztek hol lesznek-->
+
+Végül értékelem az eredményeket, és megvizsgálom hogy milyen lehetőségek vannak
+a további fejlesztésekre.
 
 ## A póker szabályai
 <!-- 3 oldal -->
@@ -206,7 +287,7 @@ Egy pontig növekedést érhetünk el a neuronok számának növelésével.
 Az alábbi mátrixot kaptam teszteléskor (1800 tanítópont, 200 tesztpont, 1 adott
 ellenfélre):
 
-Act\Pred      Fold    Call    Raise
+Act\\Pred      Fold    Call    Raise
 ----------  ------  ------  -------
 Fold          0.24    0.02     0.00
 Call          0.08    0.33     0.05
@@ -229,6 +310,16 @@ emeléseket nem azonosítja elég hatékonyan.
 Poki, Loki döntéshozása pl.
 
 ### MCTS algoritmus
+
+### Optimizáció
+
+- pszeudorandom műveletek a konstans futásidőhöz
+- vmprof
+- költséges műveletek
+  -deepcopy
+  -UTC algoritmus számítása
+  -children dictionary
+- gains: 30 sec -> 8 sec -> 3.5 sec
 
 # Eredmények értékelése
 <!-- 5 oldal -->
