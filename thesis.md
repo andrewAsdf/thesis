@@ -4,9 +4,10 @@ author: Sőre András
 bibliography: bibliography.bib
 csl: iso690-numeric-en.csl
 date: 2016
-margin-left: 2.5cm
-margin-right: 2.5cm
-fontsize: 12pt
+fontsize: 11pt
+margin-left:  3.5cm
+margin-right: 3.5cm
+linestretch:  1.25
 ...
 
 
@@ -78,11 +79,10 @@ tervezett ágens architektúráját használtam fel, ahol az ellenfél viselked�
 modellezését egy neurális háló végzi, valamint az ágens döntéseit a viszonylag
 egyszerű MCTS algoritmus segítségével állítom elő.
 
-A dolgozat elején bemutatom a pókerjátékot, valamint általam választott
-pókerfajtát, a Limit Texas Hold'emet, kitérve annak a számítógépes póker
-szempontjából lényeges aspektusaira, utána magát a számítógépes pókert, mint
+A dolgozat elején bemutatom a pókerjátékot, valamint az általam választott
+pókerfajtát, a Limit Texas hold'emet, kitérve annak a számítógépes póker
+szempontjából lényeges aspektusaira. Utána magát a számítógépes pókert, mint
 területet mutatom be, a fontosabb tulajdonságaira, megoldadó kérdésekre kitérve.
-
 Külön szót ejtek még az ellenfél modellezésének kérdéseiről, valamint a
 meglévő megoldásokról aszerint, hogy hogyan tudnak az egyes részproblémákra
 választ adni.
@@ -94,11 +94,66 @@ döntéshozásra is. <!-- todo: tesztek hol lesznek-->
 Végül értékelem az eredményeket, és megvizsgálom hogy milyen lehetőségek vannak
 a további fejlesztésekre.
 
-## A póker szabályai
-<!-- 3 oldal -->
+A pókerjáték
+============
 
-# A számítógépes póker összefoglalása
-<!-- 3 oldal -->
+A pókernek számos fajtája létezik.[@PokerWik95:online] Ezek elég különbözőek
+lehetnek, de a közös vonás mindegyikben, hogy a játékosok egy kör során
+valahány saját lapot kapnak, és a licitkör(ök) után a legjobb lapkombinációval
+(kézzel) rendelkező játékos viszi el a tétet. A kezek a játékosok saját
+lapjaiból, illetve a leosztott közös lapokból állhatnak, ha van olyan.
+
+A játékfajták több mindenben különbözhetnek, a teljesség igénye nélkül:
+
+  - Licitkörök száma
+  - Licitek határa
+  - Játékosok saját lapjainak száma, illetve a mindenki által látható közös
+    lapok száma
+  - Lapok cseréjének lehetősége, ezek száma
+  - Legjobb vagy legrosszabb kéz nyer-e, vagy mindkettő
+
+A Texas hold'em
+---------------
+
+A számítógépes pókerben a leggyakrabban vizsgált pókerfajta a Texas hold'em. A
+játék e változata nagy népszerűségre tett szert a 2000-es évek elején, a
+televíziónak és az internetnek köszönhetően. Ekkoriban terjedtek el az
+internetes pókertermek is, ahol főleg ezt a változatot játszották.
+
+A hagyományos 5 lapos pókerhez képest a játék elején minden játékos 2 saját
+lapot kap. Az osztó _(button)_ utáni játékos _(kisvak/small blind)_ az alaptét
+felét teszi meg, és az utána következő játékos _(nagyvak/big blind)_ az alaptétet
+teszi meg kötelezően, így ösztönözve a további liciteket.
+
+A Texas hold'em alfajai különbözhetnek a licitekre vonatkozó megkötésekben. A
+legnépszerűbb fajta, amit emberi játékosok játszanak, az a _no-limit_, azaz
+limit nélküli hold'em, ahol a tét minimuma van csak megszabva, ami az adott
+nagyvak, maximuma pedig a játékos összes zsetonja. További fajták még a _pot
+limit_, és a _fixed limit_ hold'em. Az előbbinél a tét maximuma a jelenlegi
+tétek összessége, a _pot_ lehet, míg az utóbbinál a tét egy fix összeg,
+pontosan egyenlő a nagyvakkal (ami a nevezéktant illeti; a játékosokat, és a
+téteket is vakoknak hívják).
+
+Az első licitkör után leosztásra kerülnek a közös lapok. Ezt _flop_nak hívják,
+és 3 közös lapot jelent. Az újabb licitelés után rendre leosztásra kerülnek a
+_turn_ és _river_ lapok, ezek 1-1 lapot jelentenek körönként.
+
+Az utolsó licitkör után a játékosok kezei a leosztott lapokból, és a saját,
+privát lapjaikból állnak. Az így rendelkezésre álló 7 lapból alkotott legjobb 5
+lapos kombináció fog számítani.
+
+### Hold'em vs. 5 lapos póker
+
+A fentiek alapján látható, hogy ennél a pókerfajtánál a játékosnak sokkal több
+információ áll rendelkezésére a döntéshez, mint a klasszikus 5 lapos pókernél,
+ahol nincsenek közös lapok, és így nem tudunk következtetni az ellenfél
+esélyeire a miénkkel szemben. Így ez a pókerfajta komplexebb stratégiák
+alkalmazását engedi meg a másik nevezett fajtához képest.
+
+A számítógépes póker
+====================
+
+A számítógépes póker a gépi játékosok által játszott pókert jelenti.
 
 Requirements of a computer poker player [@billings1998opponent]
 
