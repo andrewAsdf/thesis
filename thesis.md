@@ -8,7 +8,7 @@ fontsize: 11pt
 margin-left:  3.5cm
 margin-right: 3.5cm
 linestretch:  1.25
-...
+---
 
 
 <!--
