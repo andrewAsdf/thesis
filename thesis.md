@@ -2,12 +2,16 @@
 title: Számítógépes póker intelligens ágensekkel
 author: Sőre András
 bibliography: bibliography.bib
-csl: iso690-numeric-en.csl
+csl: ieee.csl
 date: 2016
 fontsize: 11pt
 margin-left:  3.5cm
 margin-right: 3.5cm
+margin-top: 3cm
+margin-bottom: 3cm
 linestretch:  1.25
+documentclass: report
+lang: hu
 ---
 
 
@@ -37,13 +41,6 @@ Kivonat/Abstract
 
 Bevezetés
 =========
-<!--
-- kiírás elemzése
-- előzmények
-- motiváció
-- megoldások
-- saját megoldás
--->
 
 <!-- 1 oldal -->
 A számítógépes póker a mesterséges intelligencia egy régóta kutatott területe.
@@ -54,21 +51,21 @@ Azért választottam ezt a témát, mert régebben hobbiszinten én is pókerezt
 internetes pókertermekben, így felkeltette az érdeklődésemet, hogy ezt a
 játékot számítógép is végezheti, ráadásul sokszor hatékonyabban, mint profi
 emberi játékosok.
-Annak ellenére, hogy a témakörben már rengeteg kutatást csináltak, egy
+Annak ellenére, hogy a témakörben már rengeteg kutatást végeztek, egy
 pókerágens tervezése és fejlesztése még mindig egy összetett feladat, rengeteg
 megoldandó problémával.
 
 A terület egyik legnagyobb művelője a kanadai University of Albertán működő
 Computer Poker Research Group (CRPG), akik már a kilencvenes évek közepétől
-foglalkoznak a témával, és rengeteg publikációt adtak ki róla. A kutatáson
-kívül versenyek is léteznek, ahol számítógépes pókerágensek mérhetik össze
+foglalkoznak a témával, és rengeteg eredményt publikáltak. A kutatáson
+kívül versenyeket is szerveznek, ahol számítógépes pókerágensek mérhetik össze
 tudásukat: a leghíresebb az Annual Computer Poker Competition, amelyet 2006-ban
 tartottak először, és évente szervezik, különböző kategóriákban.
 
 Az évek során számos ágenst fejlesztettek ki. A kezdeti próbálkozásokhoz képest
 mára ott tartunk, hogy a CRPG "megoldotta" az általam is választott
-pókerfajtát, azaz a legújabb játékosuk már gyakorlatilag tökéletesen játszik.
-[@CepheusP8:online] Az általuk készített ágensek forrása nem nyílt, viszont
+pókerfajtát, azaz a legújabb játékosuk már gyakorlatilag tökéletesen játszik
+[@CepheusP8:online]. Az általuk készített ágensek forrása nem nyílt, viszont
 vázlatos képet kaphatunk a működésükről.
 
 A saját munkám során a vizsgált pókerfajta, és a tesztkörnyezet kiválasztása
@@ -88,7 +85,7 @@ meglévő megoldásokról aszerint, hogy hogyan tudnak az egyes részproblémák
 választ adni.
 
 Ezek után a saját ágensem architektúráját fogom ismertetni, a rendszerterven
-kívül a megvalósítás részleteivel együtt, kitérve az ellenfélmodellezésre, és a
+kívül a megvalósítás részleteivel együtt, kitérve az ellenfélmodellezésre és a
 döntéshozásra is. <!-- todo: tesztek hol lesznek-->
 
 Végül értékelem az eredményeket, és megvizsgálom hogy milyen lehetőségek vannak
@@ -97,7 +94,7 @@ a további fejlesztésekre.
 A pókerjáték
 ============
 
-A pókernek számos fajtája létezik.[@PokerWik95:online] Ezek elég különbözőek
+A pókernek számos fajtája létezik[@PokerWik95:online]. Ezek elég különbözőek
 lehetnek, de a közös vonás mindegyikben, hogy a játékosok egy kör során
 valahány saját lapot kapnak, és a licitkör(ök) után a legjobb lapkombinációval
 (kézzel) rendelkező játékos viszi el a tétet. A kezek a játékosok saját
@@ -130,17 +127,17 @@ A Texas hold'em alfajai különbözhetnek a licitekre vonatkozó megkötésekben
 legnépszerűbb fajta, amit emberi játékosok játszanak, az a *no-limit*, azaz
 limit nélküli hold'em, ahol a tét minimuma van csak megszabva, ami az adott
 nagyvak, maximuma pedig a játékos összes zsetonja. További fajták még a *pot
-limit*, és a *fixed limit* hold'em. Az előbbinél a tét maximuma a jelenlegi
+limit* és a *fixed limit* hold'em. Az előbbinél a tét maximuma a jelenlegi
 tétek összessége, a *pot* lehet, míg az utóbbinál a tét egy fix összeg,
-pontosan egyenlő a nagyvakkal (ami a nevezéktant illeti; a játékosokat, és a
+pontosan egyenlő a nagyvakkal (ami a nevezéktant illeti; a játékosokat és a
 téteket is vakoknak hívják).
 
 Az első licitkör után leosztásra kerülnek a közös lapok. Ezt *flop* nak hívják,
 és 3 közös lapot jelent. Az újabb licitelés után rendre leosztásra kerülnek a
 *turn* és *river* lapok, ezek 1-1 lapot jelentenek körönként.
-Az utolsó licitkör után a játékosok kezei a leosztott lapokból, és a saját,
+Az utolsó licitkör után a játékosok kezei a leosztott lapokból és a saját,
 privát lapjaikból állnak. Az így rendelkezésre álló 7 lapból alkotott legjobb 5
-lapos kombináció fog számítani.
+lapos kombináció fog számítani. A lapok mutatását hívják _showdownnak_.
 
 A játékot játszhatják *cash game* vagy verseny formában. Az előbbinél a játékos
 célja az asztalhoz leülve minél több zsetont megszerezni valahány kör során. A
@@ -177,7 +174,7 @@ ahol nincsenek közös lapok, és így nem tudunk következtetni az ellenfél
 esélyeire a miénkkel szemben. Így a Texas hold'em komplexebb stratégiák
 alkalmazását engedi meg a másik nevezett pókerfajtához képest. Több mű is
 született, ami a Texas hold'em stratégiáit tárgyalja. Ezek könnyen alkalmazható
-heurisztikákat adnak a játékosok kezébe. [@sklansky1999theory] Az
+heurisztikákat adnak a játékosok kezébe [@sklansky1999theory]. Az
 emberi játékosok számára készített stratégiákat felhasználják szakértői
 rendszerek készítésénél is, erről majd a későbbi fejezetekben lesz szó.
 
@@ -187,19 +184,19 @@ A póker, mint kutatási terület
 <!-- TODO: póker vs. sakk stb?-->
 
 A pókernek, mint játéknak, az alábbi jellemzői alkalmassá teszik a mesterséges
-intelligencia kutatására: [@davidson2002opponent]
+intelligencia kutatására [@davidson2002opponent]:
 
  - Nemdeterminisztikus a játék kimenetele
  - A játékos részére csak részleges információ áll rendelkezésre a játék
-   állapotáról (nem-tökéletes információs játék)<!-- fogalom helyes-e -->
+   állapotáról (nem-tökéletes információjú játék)<!-- fogalom helyes-e -->
 
 
 A számítógépes póker
 ====================
 
 A játékot játszó hatékony mesterséges intelligenciának az alábbi
-tulajdonságokkal kell rendelkeznie a sikeres játék érdekében:
-[@davidson2002opponent, ch. 3]
+tulajdonságokkal kell rendelkeznie a sikeres játék érdekében [@davidson2002opponent, ch. 3]:
+
 
 * Kéz kiértékelése: A lapjaink jelenlegi erősségét a közös lapok, valamint az
   ellenfél lehetséges lapjai határozzák meg. Adott szituációban a legerősebb
@@ -207,9 +204,12 @@ tulajdonságokkal kell rendelkeznie a sikeres játék érdekében:
   számára.
 
 * Kiszámíthatatlanság: A cselekvéseinknek nem szabad elárulnia a kezünk
-  erősségét. Játék közben *blöffölnünk*, *slow-playt*, vagy *check-raise*-t
-  kell használnunk. Fontos, hogy ne ugyanazt a stratégiát használjuk mindig egy
-  adott szituációban, hogy elrejtsük a kézerősségünket.
+  erősségét. Játék közben *blöffölnünk*, *slow-playt*^[A blöff egy formája,
+  ahol kevesebbet emelünk, mint ami a lapunk alapján várható lenne], vagy
+  *check-raise-t*^[Egy emelési stratégia, amikor is egy check után az ellenfél
+  emel, majd mi visszaemelünk] kell használnunk. Fontos, hogy ne ugyanazt a
+  stratégiát használjuk mindig egy adott szituációban, hogy elrejtsük a
+  kézerősségünket.
 
 * Ellenfélmodellezés: Meg kell értenünk, hogy hogyan játszik egy ellenfél, hogy
   kihasználjuk a gyengeségeit, és védekezni is tudjunk ellene. Ehhez tudnunk
@@ -231,24 +231,50 @@ Opponent Modelling
 Ahogy korábban elhangzott, az ellenfélmodellezés két fő célja az ellenfél
 cselekvéseinek, és kézerősségének megbecslése.
 
-Az ellenfélmodellezést megnehezítő tényezők:[@davidson2002opponent]
+Az ellenfélmodellezést megnehezítő tényezők [@davidson2002opponent, ch. 4]:
 
-- Bizonytalanság
+- Bizonytalanság: A nagy számú ismeretlen kártya megnehezíti a felhasználható
+  információk kinyerését. Minden játék teljsen más lehet, mint az előző, ezért
+  sok megfigyelésre van szükségünk, mielőtt azonosítunk egy tendenciát.
 
-- Hiányzó információ
+- Hiányzó információ: Csak akkor látjuk az ellenfél lapjait, ha eljut a
+  showdownig, ráadásul ezek a lapok csak a megjátszott kezeinek csak egy
+  részhalmaza.
 
-- Ismeretlen változók
+- Ismeretlen változók: Egy játékos döntéseit ismeretlen számú változó
+  befolyásolja, és a játékosok különböző tényezőket vehetnek figyelembe játék
+  közben. Például amíg az asztalnál elfoglalt pozíció fontos lehet egy
+  játékosnak, addig egy másiknak kevésbé. A játékot meghatározó tényezők
+  megválasztása nem feltétlenül racionális módon történik, például amikor egy
+  játékos csak a pikk színű lapokat preferálja a játékához.
+  Az ellenfél modellezése közben viszont bármilyen korreláció kiszűrése előnyös
+  lehet.
 
-- Intuíció
+- Lassú alkalmazkodás: Az emberi játékosok megérzés alapján, és tapasztalat alapján
+  gyorsan ki tudják találni az ellenfeleik játékát. Még a saját játékukat is
+  megváltoztathatják, hogy verifikáljanak egy-egy ilyen elméletet. Ezzel
+  szemben a gépi tanuló módszereknek sok megfigyelésre van szülségük, és
+  lassabban alkalmazkodnak.
 
-- Több szint
+- A modellezés több szintje: Az ellenfél modellezése nem csak a közvetlen döntéseire
+  vonatkozhat, hanem arra is, hogy ő milyen modellt alkot rólunk, vagy hogy
+  milyen modellt alkot arról, hogy mi milyen modellt alkotunk róla, stb.
 
-- Változó ellenfél
+- Változó ellenfél: Egy jó ellenfél változtatni fogja a játékát idővel, így a
+  róla alkotott modellünk elavulhat addigra, mire már elég megfigyeléssel
+  rendelkezünk a játékáról.
+
+
+### A predikció módszerei
+
+- Szakértői rendszerek
+- Statisztika
+- Neurális hálók
 
 ### Loki
 
-Lapok eloszlása: súlyozott tábla a lapkombinációkról. [@billings1998opponent,
-page 4-6] Kezdeti súlyok a megfigyelt kezek alapján.
+Lapok eloszlása: súlyozott tábla a lapkombinációkról [@billings1998opponent,
+page 4-6]. Kezdeti súlyok a megfigyelt kezek alapján.
 
 <!--
 * Hand strength
@@ -328,23 +354,47 @@ egyéb lehetőségek:
 - Kliens/szerver architektúra használata
  -->
 
-## Ágens architektúrája
+Ágens architektúrája
+--------------------
+
 <!-- 4 oldal -->
 - Architekturális vázlat
 - Komponensek szerepe röviden
 
-## Ellenfélmodellezés megvalósítása
+
+Ellenfélmodellezés megvalósítása
+--------------------------------
+
 <!-- 4 oldal -->
 Poki féle neurális háló, saját választott featurekkel. Kézrange becslése:
 játszott játékok
 
+
 ### Gépi tanulás használata
+
+<!--
 - neurális hálók intro
 - on-line tanulás biztosítása
+-->
 
-### Featurek a játék állapotáról
+A featurek egy neurális háló által betanításra kerülnek, ahol a kimenet a
+végzett cselekvés a játék adott állapotában. A modelleket játékosszinten
+lehet tárolni, viszont   hatékony megoldás lehet az is, hogy asztal/játékos
+bontásban készülne egy-egy modell. Így a rendszer automatikusan alkalmazkodna
+a különböző játékoshalmazokhoz. Hátránya persze, hogy minden halmazhoz újabb
+betanítást igényelne.
 
-A featurek egy része a Poki által használtakból került ki
+- Előrecsatolt neurális háló
+
+- scikit-learn
+
+
+### Játékállapot jellegfüggvényei
+<!-- jellemzők?? -->
+
+Az előbbieknek megfelelően az ellenfél cselekvéseinek előrejelzéséhez keresni
+kellett megfelelő jellemzőket, amiket fel lehet használni.  A jellegfüggvények
+(feature-ök) egy része a Poki által használtakból került ki
 [@davidson2002opponent, page 42].
 
 Megoldás az ellenfelek cselekvéseinek kiszámítására:
@@ -360,16 +410,16 @@ A játékok adatait tároljuk, mégpedig úgy, hogy:
 
 Adott játékonként a játékokat az ellenfélmodellező feldolgozza a következő módon:
 
-- A játékok adataiból featurekat generál. Minden egyes cselekvésre kiszámolja őket.
-  A bemenet a jelenlegi játék adatai, és a cselekvő játékosra lesznek érvényesek.
-  A featurek jelenleg:
+- A játékok adataiból jellegfüggvényeket generál. Minden egyes cselekvésre
+  kiszámolja őket. A bemenet a jelenlegi játék adatai, és a cselekvő játékosra
+  lesznek érvényesek.  A felhasznált jellegfüggvények:
 
   - emelések száma (adott körre nézve)
 
-  - pot odds: ez = megadandó_zsetonok / (megadandó_zsetonok + 1)
+  - pot odds: $megadandó\_zsetonok / (megadandó\_zsetonok + pot)$
 
-  - pozíció: a játékos asztalnál elfoglalt helyének "jósága". A legjobb értéket
-    1-nek veszem, a legrosszabbat 0-nak, így könnyen felhasználható tanításhoz.
+  - pozíció: a játékos asztalnál elfoglalt helyének "jósága". 0-tól 1-ig
+    terjed, ahol 1 a buttonhoz legközelebbi ülőhely, a 0 pedig a legtávolabbi
 
   - megadandó tétek száma: a tanítás miatt ez is 0-tól 1-ig terjed, ahol 1 a
     lehető legtöbb tét (4 darab)
@@ -378,22 +428,22 @@ Adott játékonként a játékokat az ellenfélmodellező feldolgozza a követke
 
   - aktív játékosok száma (akik még az adott körben játékban vannak)
 
-  - jelenlegi kör száma: a 4 körnek megfelelően 0-tól 3-ig terjed, szintén 0 és
-    1 közé normalizálva
+  - jelenlegi kör száma: a kör sorszáma, szintén 0 és 1 közé normalizálva, azaz
+    $n / 4$, ahol $n$ a jelenlegi kör száma 0-tól 3-ig
 <!--
   - leosztott lapok "szárazsága": ez azt mutatja meg, hogy sor, vagy flöss (5
     egymást követő érték, vagy 5 egyforma szín) milyen valószínűséggel
     alakulhat ki. A közös lapok között szereplő egymást követő értékek, vagy
     egyforma színű lapok jelentősen emelik a valószínűségeket.
 
-  A legutolsó feature a leosztott lapokkal dolgozik. Ezeket máshogy is figyelembe
+  A legutolsó jellegfüggvény a leosztott lapokkal dolgozik. Ezeket máshogy is figyelembe
   lehet venni, például az adott ellenfél kézerősségének becslésénél, ami
   szintén lehetne feature.
---> 
+-->
 
 ### Ellenfél kézerőssége:
 
-<!-- todo: bővebben --> 
+<!-- todo: bővebben -->
 A játékosok lapeloszlásána:
 
 Erre a szimuláció során lenne szükség, amikor kiértékelnénk egy-egy szimulált
@@ -404,19 +454,6 @@ következtethetünk a kezdő lapok erősségére.
 
 Az ágens nem vizsgál explicit módon kézerősséget, ezt a szimuláció során a
 neurális háló, és a végén a kiértékelés adja.
-
-### Gépi tanulás használata
-
-A featurek egy neurális háló által betanításra kerülnek, ahol a kimenet a
-végzett cselekvés a játék adott állapotában. A modelleket játékosszinten
-lehet tárolni, viszont   hatékony megoldás lehet az is, hogy asztal/játékos
-bontásban készülne egy-egy modell. Így a rendszer automatikusan alkalmazkodna
-a különböző játékoshalmazokhoz. Hátránya persze, hogy minden halmazhoz újabb
-betanítást igényelne.
-
-- Előrecsatolt neurális háló
-
-- scikit-learn
 
 
 ### Kísérletek
@@ -484,8 +521,8 @@ Poki, Loki döntéshozása pl.
 MCTS algoritmus
 ---------------
 
-- A monte carlo algoritmusokről
-- A monte carlo fakeresésről
+- A Monte Carlo algoritmusokről
+- A Monte Carlo fakeresésről
 
 ### Optimizáció
 
