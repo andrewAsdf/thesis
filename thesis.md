@@ -265,11 +265,36 @@ Az ellenfélmodellezést megnehezítő tényezők [@davidson2002opponent, ch. 4]
   rendelkezünk a játékáról.
 
 
-### A predikció módszerei
+A predikció módszerei
+---------------------
 
-- Szakértői rendszerek
-- Statisztika
-- Neurális hálók
+### Szakértői rendszerek
+
+Kiindulásnak jó alapot nyújthat, ha az ellenfél modellezését a saját
+stratégiánkkal, vagy  valamilyen szabályok halmazával végezzük (akár emberi
+játékosoknak készült heurisztikákból). Ekkor feltesszük, hogy az ellenfél
+valamennyire racionálisan játszik. Ez egyfajta _generikus ellenfélmodell_, ami
+azt takarja, hogy nem vesszük figyelembe az adot ellenfél sajátosságait, hanem
+minden ellenfélre ugyanazt a modellt alkalmazzuk.
+
+### Statisztika
+
+Egy másik nyilvánvaló módszer, ha figyeljük, hogy egyes cselekvéseket milyen
+időközönként hajt végre az ellenfél. Például ha 40%-ban emel rögtön a flop
+után, akkor feltételezhetjük, hogy azt a kapott lapjainak legjobb 40%-ával
+teszi.
+
+Ha az adott ellenfél korábbi játékát akár ilyen módon figyelembe vesszük, azt
+már _specifikus ellenfélmodellezésnek_ hívjuk. Nyilvánvaló, hogy a specifikus
+ellenfélmodellek jobban teljesítenek a generikusaknál.
+
+### Neurális hálók
+
+...
+
+
+Néhány ágens ellenfélmodellezése
+--------------------------------
 
 ### Loki
 
@@ -320,9 +345,12 @@ Alberta-i CRPG tagjai is részt vettek a fejlesztésében, és mellékeltét tö
 között a Poki egyik változatát.
 
 A keretrendszer Java-t használ, és Windows alatt fut. A hozzá készített
-ágenseket (bot-ok) plugin formájában kell mellékelni, és az erre a célra
-készített Meerkat API-t kell implementálniuk. Ez a fejlesztést körülményessé
-teszi, főleg, ha az elkészített ágenst gyakran újra szeretnénk fordítani.
+ágenseket (botok) plugin formájában kell mellékelni, és az erre a célra
+készített Meerkat API-t^[Ez az API botok írását teszi lehetővé a játékhoz. A
+benne levő Player interfész implementálását kell elvégezni.
+(http://www.poker-academy.com/community.php) ] kell implementálniuk. Ez a
+fejlesztést körülményessé teszi, főleg, ha az elkészített ágenst gyakran újra
+szeretnénk fordítani.
 
 A fejlesztést könnyítendő, készítettem egy dummy ágenst, ami egyfajta
 kliensként funkcionál egy külsőleg megírt szerverhez, ami a tényleges logikát
@@ -529,15 +557,27 @@ MCTS algoritmus
 - pszeudorandom műveletek a konstans futásidőhöz
 - vmprof
 - költséges műveletek
-  -deepcopy
-  -UTC algoritmus számítása
-  -children dictionary
+    -deepcopy
+    -UTC algoritmus számítása
+    -children dictionary
 - gains: 30 sec -> 8 sec -> 3.5 sec
 
 # Eredmények értékelése
 <!-- 5 oldal -->
 
-## Tesztkonfigurációk
 
- - Jagbot - statikus, kezdőknek való főleg
-   4 db Jagbot, plusz az ágens, 2000 db játék
+Tesztkonfigurációk
+------------------
+
+<!-- Todo -->
+
+A teszteléshez használt konfigurációkat a Poker Academy-vel könnyen össze
+lehetett állítani, majd menteni.
+
+### Jagbotok
+
+A Jagbot egy szakértői rendszer alapú ágens. Teljesen statikus módon játszik,
+ezért alkalmas arra, hogy a könnyű ellenfél szerepét betöltse.
+
+A tesztkonfiguráció 4 darab Jagbotból, és az ágensünkből állt. Ezzel 2000 darab
+játékot játszattam, amit fel tudtam használni a tanítás teszteléséhez.
