@@ -1,6 +1,4 @@
 ---
-title: Számítógépes póker intelligens ágensekkel
-author: Sőre András
 bibliography: bibliography.bib
 csl: ieee.csl
 date: 2016
@@ -10,8 +8,11 @@ margin-right: 3.5cm
 margin-top: 3cm
 margin-bottom: 3cm
 linestretch:  1.25
-documentclass: report
 lang: hu
+documentclass: report
+title: false
+header-includes:
+    - \usepackage{graphicx}
 ---
 
 
@@ -33,6 +34,60 @@ Eredmények értékelése                   5
 Irokdalom                                1
 Függelék
 -->
+
+<!-- titlepage and acknowledgement-->
+
+\begin{titlepage}
+\begin{center}
+\includegraphics[width=60mm,keepaspectratio]{figures/BMElogo.png}\\
+\vspace{0.3cm}
+\textbf{Budapesti Mûszaki és Gazdaságtudományi Egyetem}\\
+\textmd{Villamosmérnöki és Informatikai Kar}\\
+\textmd{Méréstechnikai és Információs Rendszerek tanszék}\\[5cm]
+
+\vspace{0.4cm}
+{\huge \bfseries Számítógépes póker intelligens ágensekkel}\\[0.8cm]
+\vspace{0.5cm}
+\textsc{\Large Szakdolgozat}\\[4cm]
+
+\begin{tabular}{cc}
+ \makebox[7cm]{\emph{Készítette}} & \makebox[7cm]{\emph{Konzulens}} \\
+ \makebox[7cm]{Sőre András} & \makebox[7cm]{Dr. Dobrowiecki Tadeusz doc.}
+\end{tabular}
+
+\vfill
+{\large \today}
+\end{center}
+\end{titlepage}
+
+\begin{center}
+\large
+\textbf{HALLGATÓI NYILATKOZAT}\\
+\end{center}
+
+Alulírott \emph{Sőre András}, szigorló hallgató kijelentem, hogy ezt a szakdolgozatot meg nem engedett segítség nélkül, saját magam készítettem, csak a megadott forrásokat (szakirodalom, eszközök stb.) használtam fel. Minden olyan részt, melyet szó szerint, vagy azonos értelemben, de átfogalmazva más forrásból átvettem, egyértelmûen, a forrás megadásával megjelöltem.
+
+Hozzájárulok, hogy a jelen munkám alapadatait (szerzõ(k), cím, angol és magyar nyelvû tartalmi kivonat, készítés éve, konzulens(ek) neve) a BME VIK nyilvánosan hozzáférhetõ elektronikus formában, a munka teljes szövegét pedig az egyetem belsõ hálózatán keresztül (vagy autentikált felhasználók számára) közzétegye. Kijelentem, hogy a benyújtott munka és annak elektronikus verziója megegyezik. Dékáni engedéllyel titkosított diplomatervek esetén a dolgozat szövege csak 3 év eltelte után válik hozzáférhetõvé.
+
+\begin{flushleft}
+\vspace*{1cm}
+Budapest, \today
+\end{flushleft}
+
+\begin{flushright}
+ \vspace*{1cm}
+ \makebox[7cm]{\rule{6cm}{.4pt}}\\
+ \makebox[7cm]{\emph{Sőre András}}\\
+ \makebox[7cm]{hallgató}
+\end{flushright}
+\thispagestyle{empty}
+
+\vfill
+\clearpage
+\thispagestyle{empty}
+
+\tableofcontents
+<!-- end of titlepage and acknowledgement-->
 
 Kivonat/Abstract
 ================
