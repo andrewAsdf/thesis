@@ -1,7 +1,6 @@
 ---
 bibliography: bibliography.bib
 csl: ieee.csl
-date: 2016
 fontsize: 11pt
 margin-left:  3.5cm
 margin-right: 3.5cm
@@ -10,7 +9,6 @@ margin-bottom: 3cm
 linestretch:  1.25
 lang: hu
 documentclass: report
-title: false
 header-includes:
     - \usepackage{graphicx}
 ---
@@ -35,13 +33,14 @@ Irokdalom                                1
 Függelék
 -->
 
-<!-- titlepage and acknowledgement-->
+
+<!-- titlepage as inline LaTeX-->
 
 \begin{titlepage}
 \begin{center}
 \includegraphics[width=60mm,keepaspectratio]{figures/BMElogo.png}\\
 \vspace{0.3cm}
-\textbf{Budapesti Mûszaki és Gazdaságtudományi Egyetem}\\
+\textbf{Budapesti Műszaki és Gazdaságtudományi Egyetem}\\
 \textmd{Villamosmérnöki és Informatikai Kar}\\
 \textmd{Méréstechnikai és Információs Rendszerek tanszék}\\[5cm]
 
@@ -60,14 +59,31 @@ Függelék
 \end{center}
 \end{titlepage}
 
+<!-- end titlepage-->
+
+
+<!-- acknowledgement as inline LaTeX-->
+
+\thispagestyle{empty}
+
 \begin{center}
 \large
-\textbf{HALLGATÓI NYILATKOZAT}\\
+\textsc{Hallgatói Nyilatkozat}\\
 \end{center}
 
-Alulírott \emph{Sőre András}, szigorló hallgató kijelentem, hogy ezt a szakdolgozatot meg nem engedett segítség nélkül, saját magam készítettem, csak a megadott forrásokat (szakirodalom, eszközök stb.) használtam fel. Minden olyan részt, melyet szó szerint, vagy azonos értelemben, de átfogalmazva más forrásból átvettem, egyértelmûen, a forrás megadásával megjelöltem.
+Alulírott \emph{Sőre András}, szigorló hallgató kijelentem, hogy ezt a
+szakdolgozatot meg nem engedett segítség nélkül, saját magam készítettem, csak
+a megadott forrásokat (szakirodalom, eszközök stb.) használtam fel. Minden
+olyan részt, melyet szó szerint, vagy azonos értelemben, de átfogalmazva más
+forrásból átvettem, egyértelmûen, a forrás megadásával megjelöltem.
 
-Hozzájárulok, hogy a jelen munkám alapadatait (szerzõ(k), cím, angol és magyar nyelvû tartalmi kivonat, készítés éve, konzulens(ek) neve) a BME VIK nyilvánosan hozzáférhetõ elektronikus formában, a munka teljes szövegét pedig az egyetem belsõ hálózatán keresztül (vagy autentikált felhasználók számára) közzétegye. Kijelentem, hogy a benyújtott munka és annak elektronikus verziója megegyezik. Dékáni engedéllyel titkosított diplomatervek esetén a dolgozat szövege csak 3 év eltelte után válik hozzáférhetõvé.
+Hozzájárulok, hogy a jelen munkám alapadatait (szerzõ(k), cím, angol és magyar
+nyelvû tartalmi kivonat, készítés éve, konzulens(ek) neve) a BME VIK
+nyilvánosan hozzáférhetõ elektronikus formában, a munka teljes szövegét pedig
+az egyetem belsõ hálózatán keresztül (vagy autentikált felhasználók számára)
+közzétegye. Kijelentem, hogy a benyújtott munka és annak elektronikus verziója
+megegyezik. Dékáni engedéllyel titkosított diplomatervek esetén a dolgozat
+szövege csak 3 év eltelte után válik hozzáférhetõvé.
 
 \begin{flushleft}
 \vspace*{1cm}
@@ -80,19 +96,22 @@ Budapest, \today
  \makebox[7cm]{\emph{Sőre András}}\\
  \makebox[7cm]{hallgató}
 \end{flushright}
-\thispagestyle{empty}
 
 \vfill
-\clearpage
-\thispagestyle{empty}
+\setcounter{page}{0}
+\newpage
+
+<!-- end of acknowledgement-->
+
 
 \tableofcontents
-<!-- end of titlepage and acknowledgement-->
 
-Kivonat/Abstract
+
+Kivonat/Abstract {-}
 ================
 
-<!-- 1 oldal -->
+
+
 
 Bevezetés
 =========
@@ -237,13 +256,53 @@ A póker, mint kutatási terület
 ------------------------------
 <!-- TODO: szövegezni-->
 <!-- TODO: póker vs. sakk stb?-->
+<!--
+### Játékfa naiv megoldása:
+  - Ki kell teríteni, és a csúcsokat színezni
+  - A végén ki nyert: egy játékos, vagy döntetlen
+  - Egy szinten levő csúcsokat aszerint, hogy ki játszik: ekkor ha van
+    ellentétes, vagy döntetlen szín alatta, akkor olyanra, egyébként a játékos
+    színére
+  - A gyökér színe dönti el a játék kimenetelét
 
-A pókernek, mint játéknak, az alábbi jellemzői alkalmassá teszik a mesterséges
-intelligencia kutatására [@davidson2002opponent]:
+### Minmax algoritmus szekvenciális játékokhoz:
+  - Kiértékelőfüggvény a játék állapotához (heurisztikus is lehet, ha nagy a fa)
+  - Az ellenfél az érték minimalizálására törekszik, a játékos a maximalizálására
+  - Az kiválasztott érték felfele propagálódik
+-->
 
- - Nemdeterminisztikus a játék kimenetele
- - A játékos részére csak részleges információ áll rendelkezésre a játék
-   állapotáról (nem-tökéletes információjú játék)<!-- fogalom helyes-e -->
+A játékoknak általában tisztán definiált szabályaik, és céljaik vannak. A
+legtöbb játéknak, ahol a játékos képességei számítanak a szerencsével
+ellentétben, egyszerű a játékmenete, viszont komplex stratégiák kidolgozását
+teszik lehetővé. Eredmények tekintetében ezek miatt könnyű összemérni két
+játékos teljesítményét is, így összehasonlíthatóvá válnak a különböző gépi
+játékosok. 
+
+A póker, mint játék, több mozzanatában különbözik a többi gyakran kutatott
+játéktól (pl. sakk)[@billings1995poker].
+
+### Nem-tökéletes információ
+<!-- 
+- imperfect: nem ismert minden esemény, ami történik a játékban (pl. _inicializáció_)
+- incomplete: a játék **szerkezete** nem ismert, pl hasznosságfüggvények, célok
+-->
+
+Nem-tökéletes információjú játéknak azt nevezik, amikor a játékosok nem tudnak
+mindig a játékban történt eseményekről[@Perfecti13Online]. A ha a póker
+játékfájába belevesszük a lapok leosztását, mint eseményeket, akkor mondhatjuk,
+hogy mindegyik játékos csak a saját lapjainak leosztásáról értesül.
+
+### Nemdeterminisztikus kimenetel
+
+Általánosságban mondhatjuk, hogy egy játékhoz annál nehezebb játékost készíteni
+a mesterséges intelligencia segítségével, minél nagyobb a lehetséges
+játékállapotok száma, és ezzel a játékfa mérete.
+
+A nemdeterminisztikus elemek egy játékban úgy növelik a játékfát, hogy közben a
+hagyományos keresőalgoritmusok keresési terét nehéz lesz csökkenteni, így az
+alkalmazhatóságuk is kérdéses lesz ilyen esetekben[@billings1995poker].
+
+
 
 
 A számítógépes póker
