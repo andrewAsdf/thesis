@@ -8,9 +8,11 @@ margin-top: 3cm
 margin-bottom: 3cm
 linestretch:  1.25
 lang: hu
+babel-lang: magyar
 documentclass: report
 header-includes:
     - \usepackage{graphicx}
+    - \usepackage[style=german]{csquotes}
 ---
 
 
@@ -245,9 +247,9 @@ Hold'em vs. 5 lapos póker
 A fentiek alapján látható, hogy ennél a pókerfajtánál a játékosnak sokkal több
 információ áll rendelkezésére a döntéshez, mint a klasszikus 5 lapos pókernél,
 ahol nincsenek közös lapok, és így nem tudunk következtetni az ellenfél
-esélyeire a miénkkel szemben. Így a Texas hold'em komplexebb stratégiák
-alkalmazását engedi meg a másik nevezett pókerfajtához képest. Több mű is
-született, ami a Texas hold'em stratégiáit tárgyalja. Ezek könnyen alkalmazható
+esélyeire a miénkkel szemben. Ezért a Texas hold'em komplexebb stratégiák
+alkalmazását engedi meg a másik nevezett pókerfajtához képest. Több könyv is
+íródott, ami a Texas hold'em stratégiáit tárgyalja. Ezek könnyen alkalmazható
 heurisztikákat adnak a játékosok kezébe [@sklansky1999theory]. Az
 emberi játékosok számára készített stratégiákat felhasználják szakértői
 rendszerek készítésénél is, erről majd a későbbi fejezetekben lesz szó.
@@ -276,21 +278,28 @@ legtöbb játéknak, ahol a játékos képességei számítanak a szerencsével
 ellentétben, egyszerű a játékmenete, viszont komplex stratégiák kidolgozását
 teszik lehetővé. Eredmények tekintetében ezek miatt könnyű összemérni két
 játékos teljesítményét is, így összehasonlíthatóvá válnak a különböző gépi
-játékosok. 
+játékosok.
 
 A póker, mint játék, több mozzanatában különbözik a többi gyakran kutatott
-játéktól (pl. sakk)[@billings1995poker].
+játéktól (pl. sakk).
 
 ### Nem-tökéletes információ
-<!-- 
+<!--
 - imperfect: nem ismert minden esemény, ami történik a játékban (pl. _inicializáció_)
 - incomplete: a játék **szerkezete** nem ismert, pl hasznosságfüggvények, célok
 -->
 
 Nem-tökéletes információjú játéknak azt nevezik, amikor a játékosok nem tudnak
-mindig a játékban történt eseményekről[@Perfecti13Online]. A ha a póker
-játékfájába belevesszük a lapok leosztását, mint eseményeket, akkor mondhatjuk,
-hogy mindegyik játékos csak a saját lapjainak leosztásáról értesül.
+mindig a játékban történt eseményekről[@Perfecti13:online]. A ha a póker
+játékfájába^[A játékfa egy irányított gráf, ahol a csúcsok a játék állapotai,
+és az élek a játékosok lépései] belevesszük a lapok leosztását, mint
+eseményeket, akkor mondhatjuk, hogy mindegyik játékos csak a saját lapjainak
+leosztásáról értesül.
+
+A pókerben a hiányzó információk szerepe nagyon fontos, ellentétben pl a
+Scrabble-vel, ahol az ellenfél betűit nem ismerjük, viszont a gyakorlatban nem
+befolyásolja nagyban a játékosok stratégiáit[@billings1995computer].
+
 
 ### Nemdeterminisztikus kimenetel
 
@@ -300,9 +309,7 @@ játékállapotok száma, és ezzel a játékfa mérete.
 
 A nemdeterminisztikus elemek egy játékban úgy növelik a játékfát, hogy közben a
 hagyományos keresőalgoritmusok keresési terét nehéz lesz csökkenteni, így az
-alkalmazhatóságuk is kérdéses lesz ilyen esetekben[@billings1995poker].
-
-
+alkalmazhatóságuk is kérdéses lesz ilyen esetekben[@billings1995computer].
 
 
 A számítógépes póker
@@ -404,8 +411,21 @@ ellenfélmodellek jobban teljesítenek a generikusaknál.
 
 ### Neurális hálók
 
-...
+A neurális hálók a gépi tanuló rendszerek egyik fajtája. Egyszerű felépítésének
+és felhasználhatóságának köszönhetően az ellenfélmodellezés feladata is
+megoldható vele.
 
+Az alapegysége a perceptron, ami az emberi idegsejthez hasonlóan összegzi a
+bemeneteit, és ezt egy előjelfüggvény, vagy egy szigmoid függvény bemeneteként
+használja fel. Az így képzett struktúra a bemenetek lineáris szeparálására
+alkalmas. Nemlineáris szeparálás is megoldható több réteg perceptron
+összekötésével, ahol egy réteg bemenete az előző réteg kimenete.
+
+Egy konkrét példáról a Poki-ról szóló részben lesz szó.
+
+<!--
+Todo: kieg
+-->
 
 Néhány ágens ellenfélmodellezése
 --------------------------------
@@ -458,22 +478,25 @@ használt PokerAcademy megfelel ennek a követelménynek, mivel az University of
 Alberta-i CRPG tagjai is részt vettek a fejlesztésében, és mellékeltét többek
 között a Poki egyik változatát.
 
+A PokerAcademy eredetileg egy edzőprogram emberi játékosoknak, de beállítható
+úgy is, hogy csak gépi játékosok játsszanak egymással. Saját gépi játékost is
+adhatunk a programhoz.
+
 A keretrendszer Java-t használ, és Windows alatt fut. A hozzá készített
-ágenseket (botok) plugin formájában kell mellékelni, és az erre a célra
-készített Meerkat API-t^[Ez az API botok írását teszi lehetővé a játékhoz. A
-benne levő Player interfész implementálását kell elvégezni.
-(http://www.poker-academy.com/community.php) ] kell implementálniuk. Ez a
+ágenseket (a játékban botnak hívják) plugin formájában kell mellékelni, és az
+erre a célra készített Meerkat API-t^[Ez az API botok írását teszi lehetővé a
+játékhoz. A benne levő Player interfész implementálását kell elvégezni.
+(http://www.poker-academy.com/community.php) ] kell használniuk. Ez a
 fejlesztést körülményessé teszi, főleg, ha az elkészített ágenst gyakran újra
-szeretnénk fordítani.
+szeretnénk fordítani, mivel mindig be kell csomagolni `.jar` formába az ágenst,
+és újraindítani a játékot.
 
 A fejlesztést könnyítendő, készítettem egy dummy ágenst, ami egyfajta
 kliensként funkcionál egy külsőleg megírt szerverhez, ami a tényleges logikát
 tartalmazza a játékoshoz. Ezt a játék által használt 1.5-ös JRE miatt könnyen
 meg lehetett valósítani. Az elkészült kliens http-n keresztül küld, és fogad
-XML üzeneteket, egy egyszerű API szerint. Az ágenst már erre alapozva
-fejlesztettem, Pythont használva, webszervernek pedig Flask-et. Így a játékot
-újra se kellett indítani minden alkalommal, amikor valami módosítást végeztem
-az ágensen, mivel a dummy kliens ugyanúgy futott rajta.
+XML üzeneteket, egy egyszerű API szerint[@GitHuban99:online]. Az ágenst már
+erre alapozva fejlesztettem.
 
 <!--
 - PokerAcademy előnyök:
@@ -498,6 +521,8 @@ egyéb lehetőségek:
 
 Ágens architektúrája
 --------------------
+
+![Az ágens architektúrájának vázlata](figures/poker_architecture.png){width=75%}
 
 <!-- 4 oldal -->
 - Architekturális vázlat
