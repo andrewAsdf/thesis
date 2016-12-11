@@ -10,6 +10,7 @@ linestretch:  1.25
 lang: hu
 babel-lang: magyar
 documentclass: report
+figPrefix:
 header-includes:
     - \usepackage{graphicx}
     - \usepackage[style=german]{csquotes}
@@ -259,20 +260,6 @@ A póker, mint kutatási terület
 ------------------------------
 <!-- TODO: szövegezni-->
 <!-- TODO: póker vs. sakk stb?-->
-<!--
-### Játékfa naiv megoldása:
-  - Ki kell teríteni, és a csúcsokat színezni
-  - A végén ki nyert: egy játékos, vagy döntetlen
-  - Egy szinten levő csúcsokat aszerint, hogy ki játszik: ekkor ha van
-    ellentétes, vagy döntetlen szín alatta, akkor olyanra, egyébként a játékos
-    színére
-  - A gyökér színe dönti el a játék kimenetelét
-
-### Minmax algoritmus szekvenciális játékokhoz:
-  - Kiértékelőfüggvény a játék állapotához (heurisztikus is lehet, ha nagy a fa)
-  - Az ellenfél az érték minimalizálására törekszik, a játékos a maximalizálására
-  - Az kiválasztott érték felfele propagálódik
--->
 
 A játékoknak általában tisztán definiált szabályaik, és céljaik vannak. A
 legtöbb játéknak, ahol a játékos képességei számítanak a szerencsével
@@ -380,7 +367,9 @@ a továbbiakban lesz jelentősége.
 Ez egy metrika, amit a flop után lehet alkalmazni, hogy megbecsüljük a kezünk
 erősségét a többi játékoshoz képest[@billings1998opponent]. Ellenfélmodellezés
 nélkül egyszerűen megszámoljuk a nálunk jobb, rosszabb, és ugyanolyan kezeket.
-Flop esetén pl $\binom{47}{2} = 1081$ lehetséges kéz lehet az ellenfeleknél.
+Flop esetén pl $\binom{47}{2} = 1081$ lehetséges kéz lehet egy ellenfélnél^[A
+nálunk levő kettőt, és a 3 db. leosztott lapot ismerjük: 52 - 5 db. lap
+ismeretlen].
 Több ellenfél esetén egyszerűen hatványozzuk a kapott értéket az ellenfelek
 számával.
 
@@ -389,18 +378,53 @@ számával.
 Kíváncsiak lehetünk arra, hogy milyen esélyünk van, hogy javul a kezünk a flop
 után, ahogy leosztanak még közös lapokat. A kézpontenciál megmondja, hogy
 mekkora eséllyel javul a lapunk, úgy, hogy összeszámolja, hogy hány esetben
-történhet ez meg.
+történhet ez meg (a kézpotenciáltmég pozitív potenciálnak is hívják).
 
-Bizonyos kezeknek (ha már ismerjük a flopot) sokkal nagyobb esélyük van a
-javulásra, pl a sorhúzóknak^[Olyan kéz, ami 1 lap híján sort alkot], és a
-flösshúzóknak^[Olyan kéz, ami egy lap híján flösst alkot].
+Ehhez meg kell nézni egy ellenfél lehetséges lapjait: a flopon  pl. 990 * 1081
+lehetséges kombinációt kell végignéznünk, mert 990 féle turn és river
+kombináció lehetséges. Bizonyos kezeknek (ha már ismerjük a flopot) sokkal
+nagyobb esélyük van a javulásra, pl a sorhúzóknak^[Olyan kéz, ami 1 lap híján
+sort alkot] és a flösshúzóknak^[Olyan kéz, ami egy lap híján flösst alkot].
+
+A negatív potenciál az előbbivel analóg módon annak az esélyét adja meg, hogy
+egy kéz a leosztott lapok hatására gyengébbnek számít. Például nálunk
+$\heartsuit K, \clubsuit A$ van, és a flopon az alábbi lapokat kapjuk:
+$\spadesuit 5, \spadesuit 6, \spadesuit 7$. Itt az összes ellenfélnél levő, és
+további közös káró lap, vagy négyes, és nyolcas rontja az esélyeinket.
+
 
 ### EHS
 
 Az egyszerűség kedvéért jó, ha van egy darab érték, ami kifejezi az erősséget a
 potenciállal együtt. Annak a valószínűségét akarjuk, hogy nálunk lesz a legjobb
 kéz, miután leosztották az utolsó lapot is. Ezt hívjuk _effektív kézerősségnek_
-(effective hand strength, EHS) [@davidson2002opponent, ch. 3.3]. 
+(effective hand strength, EHS) [@davidson2002opponent, ch. 3.3].
+
+$$ EHS = HS * (1 - NPot) + (1 - HS) * PPot $$
+
+A képletben levő $HS$ a kézerősségnek felel meg, az $NPot$ és a $PPot$ pedig
+rendre a pozitív, és negatív potenciált jelenti. A gyakorlatban viszont
+kiveszik a negatív potenciált, és az alábbi képletet használják:
+
+$$ EHS = HS + (1 - HS) * PPot $$
+
+Elsőre ez nem tűnik magától értődőnek. A magyarázat erre az, hogy ha magas a
+negatív potenciál, akkor valószinűleg amúgy is emelnénk, így kényszerítve az
+ellenfelet, hogy be kelljen fektetnie a következő lapig^[Az ellenfél keze
+javulhatna annak ellenére, hogy nem kell megfontolnia, hogy folytassa a kört.].
+
+
+### Pot Odds
+
+Egy másik, lazán kapcsolódó fogalom még a _pot odds_, ami kifejezi egy darab
+érték formájában, hogy a befektetendő pénzhez mennyit nyerhetünk vissza. Ezt
+sok helyzetben felhasználhatják az emberi, illetve a gépi játékosok is.
+
+  $$pot\_odds = frac{megadandó\_zsetonok}{megadandó\_zsetonok + pot}$$
+
+A megadandó zsetonok az adott körben, a játékos előtt történt emelések
+összességét jelenti.
+
 
 Opponent Modelling
 ------------------
@@ -482,6 +506,8 @@ perceptron összekötésével, ahol egy réteg bemenete az előző réteg kimene
 
 Egy konkrét példáról a Poki-ról szóló részben lesz szó.
 
+<!-- esetleg a decision fákról még???-->
+
 
 Különböző ágensek ellenfélmodellezése
 -------------------------------------
@@ -497,11 +523,12 @@ A Poki megtalálható a PokerAcademy-ben is, mint ellenfél.
 
 Ahogy korábban elhangzott, az ellenfélmodellezésnek két feladatot kell
 megoldania. Az egyik ezek közül az ellenfél laptartományának megbecslése, azaz
-hogy milyen lapokkal fog játszani az asztalnál.
+hogy milyen lapokkal fog játszani az asztalnál. A másik az ellenfél
+cselekvéseinek megbecslése, de a Loki-nak erre nincsen explicit módon szüksége.
 
-Ezt a Loki egy súlyozott táblával oldja meg, ahol mindegyik kezdőkézhez
-tartozik egy szorzó, hogy a többihez képest mekkora eséllyel játssza meg az
-adott ellenfél az adott lapot.
+A laptartományok becslését a Loki egy súlyozott táblával oldja meg, ahol
+mindegyik kezdőkézhez tartozik egy szorzó, hogy a többihez képest mekkora
+eséllyel játssza meg az adott ellenfél az adott lapot.
 
 A súlyok módosítása az ellenfelek cselekvései alapján történik: például ha egy
 ellenfél emel a flopon, akkor az erősebb kezekhez tartozó súlyokat növeljük, és
@@ -544,15 +571,47 @@ leképzése nem volt dokumentálva).
 
 ### Poki
 
-architektúra [@billings2002challenge, p. 209]
+A Poki a Loki továbbfejlesztett változata. A korábbi kezdőkezeknek fenttartott
+súlytáblákat úgyanúgy használja, viszont ez az ágens már explicit módon
+előrejelzi az ellenfél következő lépését, aminek a döntéshozásnál lesz szerepe.
 
-action table - actionokok százalékos aránya
+Az egyik fő újítás a Pokiban a neurális háló alapú ellenfélmodellezés
+használata. [@davidson2002opponent, chapter 4], A konkrét háló egy előrecsatolt
+neurális háló, 1 rejtett réteggel.
 
-Cselekvés előrejelzésére: előrecsatolt MLP ellenfélmodell
-[@davidson2000improved, page 3]
 
-Selective sampling: szimuláció alapú megközelítés, viszont az MCTS-el
-ellentétben nem súlyozza a játékfa csúcsait
+\# | Típus | Leírás
+-- | ----- | -----------------------------------------
+0  | valós | pot odds
+1  | valós | tétek aránya $tétek /(tétek + megadások)$
+2  | bool  | a játékos befektetett zsetont
+3  | bool  | egy tétet kell megadni
+4  | bool  | kettő, vagy több tétet kell megadni
+5  | bool  | turn van éppen
+6  | bool  | river van éppen
+7  | bool  | a játékos megadott téteket
+8  | bool  | a játékos utoljára emelt
+9  | valós | játékosok száma * 0.1
+10 | bool  | 2 aktív játékos van
+11 | bool  | játékos jön először
+12 | bool  | játékos jön utoljára
+13 | valós | kézerősség az adott ellenfélre
+14 | valós | kézpotenciál az adott ellenfélre
+15 | bool  | szakértői rendszer szerint megadna
+16 | bool  | szakértői rendszer szerint emelne
+17 | bool  | Poki jön éppen
+
+Table: A Poki által használt bemenetek
+
+A bemenetek a játék nyilvános állapotából kerülnek ki, amit mindegyik játékos
+észlel. Látható, hogy a bool típusú bemenetek közül egymást kizáróak is vannak.
+A szakértői rendszer alatt a Loki által is használt képlet-alapú döntéshozást
+kell érteni, aminek a bemutatása később következik.
+
+A súlyokat vizualizálták, így látható volt, hogy melyik bemenetek szignifikánsak az
+előrejelzés szempontjából. Ezt mutatja a @fig:pokiNN ábra.
+
+![A Poki által használt háló tanítás után](figures/poki_nn.png){width=50% #fig:pokiNN}
 
 
 Döntéshozás
@@ -560,26 +619,109 @@ Döntéshozás
 
 Minden mesterséges pókerjátékosnak, még a legegyszerűbbnek is, a rendelkezésre
 álló információk alapján valamilyen döntések sorozatát kell meghoznia egy játék
-megnyeréséhez. A döntéshozás módja szerint több féle ágenst lehet készíteni:
+megnyeréséhez. A döntéshozás^[A *Betting strategy* az ennek legjobban megfelelő fogalom
+az angolban.] módja szerint többféle ágenst lehet készíteni.
 
-- Szakértői rendszer
+### Szakértői rendszerek
 
-- Analitikus
-
-- Szimuláció alapű
+Az ellenfélmodellezéshez hasonlóan itt is kézenfekvő, hogy szakértői tudással
+vértezzük fel ágensünket. Tulajdonképpen ugyanazt a tudást fel lehet
+használni mindkét célra.
 
 <!--
-Stratégiák bemutatása?
+### Analitikus
 
-Poki, Loki döntéshozása pl.
+### Szimuláció alapű
+-->
+### Loki
 
+Idáig megismertük a Loki ellenfélmodellezését. Most megnézzük, hogy hogyan
+használja fel az előállított eloszlásokat az ellenfél lapjairól.
+
+A Loki a flop előtt egy egyszerű szakértői rendszert használ, hogy eldöntse,
+hogy beszáll-e a játékba. Ez lehetővé teszi a korábban megismert súlyozást is,
+mivel a flop előtt még nincsenek súlyozva az ellenfelek kézskáláját számon
+tartó táblák, így nem is lehetne használni a flop után levő döntési folyamatot.
+
+#### Döntési folyamat
+
+A Loki a flop után kiszámolja az _EHS_-ét. Az így kapott értéket összeveti egy
+szakértői tudást tartalmazó táblázattal, amiből megkapja, hogy milyen értékek
+esetén kell emelni. Az EHS-t a negatív kézpotenciál figyelembe vétele nélkül
+használja fel, egyrészt az ellenfél elijesztése miatt, viszont amiatt is,
+hogy nem tudjuk, hogy az ellenfelünk játszani fog-e (ez például nem feltétlen
+van így, ha az ellenfélmodellezés ad erre választ)[@billings1998poker].
+
+Például 0.5 fölött már jó eséllyel vagyunk az ellenfeleink előtt, és ezért a
+Loki emelni fog, ha idáig senki sem emelt.
+
+A Lokinak azon kívül, hogy eldöntse, hogy mikor kell emelnie, azt is el kell
+döntenie, hogy mikor éri meg megadnia. Ezt a pot odds, és a pozitív
+kézpotenciál számításával teszi meg. Ha $PPot > pot\_odds$, akkor ad meg egy
+emelést.
+
+A pozitív potenciál számításához egy kártya leosztását nézi meg előre. Ha a
+turn, és a river közös lapját is figyelembe venné, akkor meg kéne vizsgálni azt
+is, hogy vajon emelnek-e az első lap után.
+
+### Poki
+<!--
+### Játékfa naiv megoldása:
+  - Ki kell teríteni, és a csúcsokat színezni
+  - A végén ki nyert: egy játékos, vagy döntetlen
+  - Egy szinten levő csúcsokat aszerint, hogy ki játszik: ekkor ha van
+    ellentétes, vagy döntetlen szín alatta, akkor olyanra, egyébként a játékos
+    színére
+  - A gyökér színe dönti el a játék kimenetelét
+
+### Minmax algoritmus szekvenciális játékokhoz:
+  - Kiértékelőfüggvény a játék állapotához (heurisztikus is lehet, ha nagy a fa)
+  - Az ellenfél az érték minimalizálására törekszik, a játékos a maximalizálására
+  - Az kiválasztott érték felfele propagálódik
 -->
 
+A Poki alapvetően tartalmazza a Loki összes képességét, viszont egy új módszert
+is használ a döntéshozásra.
+
+Számos játékban használnak fakeresés alapú technikákat, ahol egy játékfát
+építenek, és a fa bejárásával próbálják megtalálni a legmegfelelőbb lépést.
+Ezek a technikák^[Pl. minimax algoritmus] a pókernél nem működnek, mert a fa
+köztes csúcsaihoz, amik nem levelek, az ismeretlen lapok miatt nem tudunk
+kiértékelőfüggvényt biztosítani, és a játékfa mérete általában nagyon nagy,
+hogy az egészet bejárjuk.
+
+Ezekre a problémákra nyújtanak megoldást a szimuláció alapú megközelítések,
+ahol a játékfa szélessége bejárása helyett néhány, irányított mélységi keresést
+végzünk, azaz gyakorlatilag konkrét végigjátszásokat (_rollout_) csinálunk
+egymás után (@fig:treesearch ábra).
+
+![Különbség a klasszikus fakeresés, és a szimuláció
+között.](figures/treesearch.png){width=50% #fig:treesearch}
+
+Amikor a Pokinak egy döntésre van szüksége, és szimulációt használ, akkor
+kiindulóállapotnak a játék jelenlegi állapotát veszi. Egy rollout
+végigjátszásához előre kioszt ismert lapokat az ellenfeleknek is. A lapok
+kiosztását el tudja végezni a már megismert módon, a súlytábla szerinti
+eloszlással.
+
+A végigjátszás közben, amikor az ellenfél jön, az ellenfélmodellező tudja
+megválaszolni, hogy mit lépne. A publikációk nem térnek ki arra, hogy a Poki
+hogyan dönti el, hogy szimuláció közben mit lépjen, viszont arra igen, hogy ez
+nem egy triviális kérdés [@davidson2002opponent]. Ebbe a problémába én is
+belefutottam a munkám közben.
+
+Néhány száz rollout után a szimuláció eredménye már konvergál az egyes
+cselekvések várhatóértékéhez. A legnagyobb várhatóértékű cselekvés kerül
+kiválválasztásra.
+
+<!-- még részleteket esetleg -->
 
 Ágens megvalósítása
 ===================
 
 <!-- 4 oldal -->
+Az ágens megvalósításához figyelembe vettem a korábbi önálló laboron készült
+terveket. A keretrendszer, és az architektúra egyes elemei onnan származnak.
 
 A felhasznált keretrendszer
 ---------------------------
@@ -605,11 +747,11 @@ szeretnénk fordítani, mivel mindig be kell csomagolni `.jar` formába az ágen
 és újraindítani a játékot.
 
 A fejlesztést könnyítendő, készítettem egy dummy ágenst, ami egyfajta
-kliensként funkcionál egy külsőleg megírt szerverhez, ami a tényleges logikát
-tartalmazza a játékoshoz. Ezt a játék által használt 1.5-ös JRE miatt könnyen
-meg lehetett valósítani. Az elkészült kliens http-n keresztül küld, és fogad
-XML üzeneteket, egy egyszerű API szerint[@GitHuban99:online]. Az ágenst már
-erre alapozva fejlesztettem.
+kliensként funkcionál egy tetszőlegesen megírt szerverhez, ami a tényleges logikát
+tartalmazza. A dummy ágenst a játék által használt teljes Java runtime miatt
+könnyen meg lehetett valósítani. Az elkészült kliens http-n keresztül küld, és
+fogad XML üzeneteket, egy egyszerű API szerint[@GitHuban99:online]. Az ágenst
+már erre alapozva fejlesztettem.
 
 <!--
 - PokerAcademy előnyök:
