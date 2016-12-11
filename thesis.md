@@ -106,6 +106,7 @@ Budapest, \today
 <!-- end of acknowledgement-->
 
 
+\setcounter{tocdepth}{1}
 \tableofcontents
 
 
@@ -319,9 +320,9 @@ A játékot játszó hatékony mesterséges intelligenciának az alábbi
 tulajdonságokkal kell rendelkeznie a sikeres játék érdekében [@davidson2002opponent, ch. 3]:
 
 
-* Kéz kiértékelése: A lapjaink jelenlegi erősségét a közös lapok, valamint az
-  ellenfél lehetséges lapjai határozzák meg. Adott szituációban a legerősebb
-  kézre van szükségünk, ezért ennek a becslése fontos feladat egy ágens
+* Kéz értékelése: A lapjaink jelenlegi erősségét a közös lapok, valamint az
+  ellenfél lehetséges lapjai határozzák meg. A játékban a legerősebb kézre van
+  szükségünk a győzelemhez, ezért ennek a becslése fontos feladat egy ágens
   számára.
 
 * Kiszámíthatatlanság: A cselekvéseinknek nem szabad elárulnia a kezünk
@@ -335,7 +336,9 @@ tulajdonságokkal kell rendelkeznie a sikeres játék érdekében [@davidson2002
 * Ellenfélmodellezés: Meg kell értenünk, hogy hogyan játszik egy ellenfél, hogy
   kihasználjuk a gyengeségeit, és védekezni is tudjunk ellene. Ehhez tudnunk
   kell értelmezni a cselekvéseit, hogy következtethessünk a kézerősségére, és a
-  további cselekvéseire.
+  további cselekvéseire. A kézerősség becslése nagyban függ attól, hogy hogyan
+  tudjuk az ellenfél lapjainak eloszlását megbecsülni, azaz hogy milyen
+  lapokkal hajlamos játszani.
 
 Ezek a tulajdonságok iránymutatóként szolgálnak egy pókerágens tervezésénél.
 Azt viszont már nekünk kell eldöntenünk, hogy ezeket az információkat pontosan
@@ -343,9 +346,64 @@ hogyan állítjuk elő, és használjuk fel. Nem is biztos, hogy egy ágens
 működése során explicit módon megjelennek ezek a fogalmak, viszont mindeképp
 számolni kell velük.
 
+Kéz értékelése
+--------------
+
+A kezek értékeléséhez több heurisztika, és egyszerűsítés is rendelkezésünkre
+áll [@billings1998poker]. Ezeknek még a későbbi ágensek bemutatása során is
+szerepük lesz.
+
+### Kezdőkezek csoportosítása
+
+A kezdőkezek a Texas hold'emben 2 laposak, de ezeket 169 ekvivalens osztályra
+tudjuk csoportosítani, a következő módon:
+
+$$13 * pár + \binom{13}{2} * suited + \binom{13}{2} * offsuit$$
+
+Itt a _suited_ azt jelenti, hogy a két lap egy színű, az _offsuit_ pedig azt,
+hogy eltérő. Erősség szempontjából a konkrét színek nem számítanak, mivel az
+elején még nem ismerjük a közös lapokat.
+
+A kezdőkezek rangsorolását David Slansky is elvégzi tapasztalati alapon a
+Theory of Poker című könyvében [@sklansky1999theory], viszont kísérleti úton is
+előállítottak egy ilyen rangsort: a kézosztályok mindegyikével 1.000.000 játékot
+játszottak véletlenszerű ellenfelek ellen [@billings1998poker]. Az eredmény egy
+rangsor lett, ami korrelál a könyvben megadottal. Az ászpár nyert a
+legtöbbször, és a kettes-hetes _offsuit_ lett a legrosszabb.
+
+A kezekhez csoportonként hozzárendeltek továbbá egy _bevételi rátát_, aminek a
+mértékegysége a pókerben egyébként is használatos $BB/100 játszott\_kéz$. Ennek
+a továbbiakban lesz jelentősége.
+
+### Kézerősség
+
+Ez egy metrika, amit a flop után lehet alkalmazni, hogy megbecsüljük a kezünk
+erősségét a többi játékoshoz képest[@billings1998opponent]. Ellenfélmodellezés
+nélkül egyszerűen megszámoljuk a nálunk jobb, rosszabb, és ugyanolyan kezeket.
+Flop esetén pl $\binom{47}{2} = 1081$ lehetséges kéz lehet az ellenfeleknél.
+Több ellenfél esetén egyszerűen hatványozzuk a kapott értéket az ellenfelek
+számával.
+
+### Kézpotenciál
+
+Kíváncsiak lehetünk arra, hogy milyen esélyünk van, hogy javul a kezünk a flop
+után, ahogy leosztanak még közös lapokat. A kézpontenciál megmondja, hogy
+mekkora eséllyel javul a lapunk, úgy, hogy összeszámolja, hogy hány esetben
+történhet ez meg.
+
+Bizonyos kezeknek (ha már ismerjük a flopot) sokkal nagyobb esélyük van a
+javulásra, pl a sorhúzóknak^[Olyan kéz, ami 1 lap híján sort alkot], és a
+flösshúzóknak^[Olyan kéz, ami egy lap híján flösst alkot].
+
+### EHS
+
+Az egyszerűség kedvéért jó, ha van egy darab érték, ami kifejezi az erősséget a
+potenciállal együtt. Annak a valószínűségét akarjuk, hogy nálunk lesz a legjobb
+kéz, miután leosztották az utolsó lapot is. Ezt hívjuk _effektív kézerősségnek_
+(effective hand strength, EHS) [@davidson2002opponent, ch. 3.3]. 
 
 Opponent Modelling
-==================
+------------------
 
 <!-- 10 oldal, todo kifejteni -->
 
@@ -386,8 +444,8 @@ Az ellenfélmodellezést megnehezítő tényezők [@davidson2002opponent, ch. 4]
   rendelkezünk a játékáról.
 
 
-A predikció módszerei
----------------------
+Az ellenfélmodellezés minél tökéletesebb véghezviteléhez több különböző
+próbálkozás született idáig:
 
 ### Szakértői rendszerek
 
@@ -411,43 +469,78 @@ ellenfélmodellek jobban teljesítenek a generikusaknál.
 
 ### Neurális hálók
 
-A neurális hálók a gépi tanuló rendszerek egyik fajtája. Egyszerű felépítésének
-és felhasználhatóságának köszönhetően az ellenfélmodellezés feladata is
-megoldható vele.
+A neurális háló a gépi tanuló rendszerek egyik fajtája. Különböző osztályozási
+és regressziós feladatok megoldására lehet használni. Egyszerű felépítésének és
+felhasználhatóságának köszönhetően az ellenfélmodellezés feladata is megoldható
+vele.
 
-Az alapegysége a perceptron, ami az emberi idegsejthez hasonlóan összegzi a
-bemeneteit, és ezt egy előjelfüggvény, vagy egy szigmoid függvény bemeneteként
-használja fel. Az így képzett struktúra a bemenetek lineáris szeparálására
-alkalmas. Nemlineáris szeparálás is megoldható több réteg perceptron
-összekötésével, ahol egy réteg bemenete az előző réteg kimenete.
+Az alapegysége a perceptron, ami az emberi idegsejthez hasonlóan súlyozva
+összegzi a bemeneteit, és ezt egy előjelfüggvény, vagy egy szigmoid függvény
+bemeneteként használja fel. Az így képzett struktúra a bemenetek lineáris
+szeparálására alkalmas. Nemlineáris szeparálás is megoldható több réteg
+perceptron összekötésével, ahol egy réteg bemenete az előző réteg kimenete.
 
 Egy konkrét példáról a Poki-ról szóló részben lesz szó.
 
-<!--
-Todo: kieg
--->
 
-Néhány ágens ellenfélmodellezése
---------------------------------
+Különböző ágensek ellenfélmodellezése
+-------------------------------------
+
+A Loki és utódja, Poki a CRPG által fejlesztett játékos. Ezek az ágensek azok,
+amelyek viszonylag összetettebbek, és valamennyire dokumentálva van a
+működésük. Minden részletre nem térnek ki a tanulmányok, de a működésük
+alapelve megismerhető.
+
+A Poki megtalálható a PokerAcademy-ben is, mint ellenfél.
 
 ### Loki
 
-Lapok eloszlása: súlyozott tábla a lapkombinációkról [@billings1998opponent,
-page 4-6]. Kezdeti súlyok a megfigyelt kezek alapján.
+Ahogy korábban elhangzott, az ellenfélmodellezésnek két feladatot kell
+megoldania. Az egyik ezek közül az ellenfél laptartományának megbecslése, azaz
+hogy milyen lapokkal fog játszani az asztalnál.
 
-<!--
-* Hand strength
-    - annak a valószínűsége, hogy a mi
-      kezünk nyer.
-    - RHS/HR - véletlenszerű kezek ellen
-    - súlyozni lehet a számolást (ez lesz a súlytáblás módszer)
+Ezt a Loki egy súlyozott táblával oldja meg, ahol mindegyik kezdőkézhez
+tartozik egy szorzó, hogy a többihez képest mekkora eséllyel játssza meg az
+adott ellenfél az adott lapot.
 
-* Hand potential
-    - A valószínűsége, hogy a kezünk javulni fog (nem mond mértéket!)
--->
+A súlyok módosítása az ellenfelek cselekvései alapján történik: például ha egy
+ellenfél emel a flopon, akkor az erősebb kezekhez tartozó súlyokat növeljük, és
+a gyengébb kezekhez tartozóakat csökkentjük. A módosítást végző algoritmus
+_generikus_, azaz minden ellenfélhez ugyanolyan szabályok érvényesek, viszont
+minden egyes ellenfélnek külön súlytábla van tárolva [@billings1998opponent].
 
-Hand strength, hand potential, EHS alapján formula, [@davidson2002opponent, p.
-30] hogy mi legyen a következő lépés
+#### Súlyok kezdeti értéke
+
+A súlyok kezdeti értékét statisztikai módszerekkel állapítják meg. Minden
+ellenfélnél számon tartják, hogy mekkora arányban foldoltak, adtak meg, illetve
+emeltek a flop előtt. Ebből származtatnak egy középértéket ($\mu$, a medián
+kéz), és egy varianciát ($\sigma$), amiknek a mértékegysége $nagyvak / 100
+játszott\_kéz$, azaz megegyezik a kezek bevételi rátájával.
+
+Például egy ellenfél a kezeinek 30%-át adja meg. Ez egy +200-as medián kéznek
+felel meg. Ha a varianciát 100-nak vesszük, akkor:
+
+- a +300 feletti bevételi rátával rendelkező kezek súlyát 1-re állítjuk
+- a +100 alatti bevételi rátával rendelkező kezek súlyát 0.01-re állítjuk
+- a kettő érték között levő kezek súlyát arányosan állítjuk
+- a 0-ra állítást, azaz annak feltételezését, hogy egy kezet egyáltalán nem
+  játszik az ellenfél, elkerüljük
+
+Az ellenfél releváns, flop előtt végzett cselekvéseit aszerint osztályozzuk,
+hogy a 3 fajta cselekvés mennyibe került (0, 1, vagy 1-nél több), és melyik
+körben hajtotta végre (pre-flop, flop, turn, river). Így 36 kategóriát
+kapunk^[A Loki no-limit játékot is tud játszani ilyen módon].
+
+#### Súlyok állítása
+
+A súlyok állítását a flop után végezzük. Viszont mivel már 3 közös lap látható,
+nem képezhetjük le közvetlenül a $\mu$-t és a $\sigma$-át kezdőkezekre.
+Ehelyett a kezeket olyan módon rangsoroljuk, hogy tartalmazzák a közös lapokat
+is. Ehhez a korábban megismert EHS-t használjuk, viszont a módosítás menete
+analóg a flop előttivel, tehát szintén a kategóriákba rendezett cselekvések
+alapján módosítunk (a kategóriákba rendezett cselekvések módosítássá történő
+leképzése nem volt dokumentálva).
+
 
 ### Poki
 
@@ -461,6 +554,26 @@ Cselekvés előrejelzésére: előrecsatolt MLP ellenfélmodell
 Selective sampling: szimuláció alapú megközelítés, viszont az MCTS-el
 ellentétben nem súlyozza a játékfa csúcsait
 
+
+Döntéshozás
+-----------
+
+Minden mesterséges pókerjátékosnak, még a legegyszerűbbnek is, a rendelkezésre
+álló információk alapján valamilyen döntések sorozatát kell meghoznia egy játék
+megnyeréséhez. A döntéshozás módja szerint több féle ágenst lehet készíteni:
+
+- Szakértői rendszer
+
+- Analitikus
+
+- Szimuláció alapű
+
+<!--
+Stratégiák bemutatása?
+
+Poki, Loki döntéshozása pl.
+
+-->
 
 
 Ágens megvalósítása
@@ -664,26 +777,6 @@ félre a háló.
 Több mátrixot is vizsgálva, egyértelmű volt, hogy a jelenlegi ellenfélmodell az
 emeléseket nem azonosítja elég hatékonyan.
 
-
-Döntéshozás
-===========
-
-Minden mesterséges pókerjátékosnak, még a legegyszerűbbnek is, a rendelkezésre
-álló információk alapján valamilyen döntések sorozatát kell meghoznia egy játék
-megnyeréséhez. A döntéshozás módja szerint több féle ágenst lehet készíteni:
-
-- Szakértői rendszer
-
-- Analitikus
-
-- Szimuláció alapű
-
-<!--
-Stratégiák bemutatása?
-
-Poki, Loki döntéshozása pl.
-
--->
 
 MCTS algoritmus
 ---------------
