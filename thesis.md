@@ -705,10 +705,13 @@ kiosztását el tudja végezni a már megismert módon, a súlytábla szerinti
 eloszlással.
 
 A végigjátszás közben, amikor az ellenfél jön, az ellenfélmodellező tudja
-megválaszolni, hogy mit lépne. A publikációk nem térnek ki arra, hogy a Poki
-hogyan dönti el, hogy szimuláció közben mit lépjen, viszont arra igen, hogy ez
-nem egy triviális kérdés [@davidson2002opponent]. Ebbe a problémába én is
-belefutottam a munkám közben.
+megválaszolni, hogy mit lépne.  Ehhez egy valószínűségi hármast kap vissza,
+hogy az adott ellenfél foldolna, checkelne/megadna, vagy emelne^[A megadás és a
+check egy cselekvésnek számít a Poki szempontjából, mivel egymást kizárják, és
+hasonló viselkedést feltételeznek.]. A publikációk nem térnek ki arra, hogy a
+Poki hogyan dönti el, hogy szimuláció közben mit lépjen, viszont arra igen,
+hogy ez nem egy triviális kérdés [@davidson2002opponent]. Ebbe a problémába én
+is belefutottam a munkám közben.
 
 Néhány száz rollout után a szimuláció eredménye már konvergál az egyes
 cselekvések várhatóértékéhez. A legnagyobb várhatóértékű cselekvés kerül
@@ -774,53 +777,125 @@ egyéb lehetőségek:
 - Kliens/szerver architektúra használata
  -->
 
+### Alternatívák
+
+A keretrendszer alternatívája lehetett volna a nyílt forrású `opentestbed` nevű
+projekt, ami szintén a Meerkat API-t támogató botoknak készült. Valamivel
+gyorsabb is a játék futtatása, viszont nem lettek volna elérhetőek a CRPG által
+írt ágensek, és a futtatása is fapadosabb. Előnye lett volna, hogy mivel
+rendelkezünk a forrásával is, lehetséges lett volna debugolni is közvetlenül.
+
+Ehhez a projekthez volt mellékelve egy hasonló ágens is, mint amit készítettem,
+viszont problémásnak találtam portolni a PokerAcademyhez, és nem volt
+dokumentálva, vagy tesztelve.
+
+
 Ágens architektúrája
 --------------------
 
-![Az ágens architektúrájának vázlata](figures/poker_architecture.png){width=75%}
+Az ágens egyszerű felépítéssel rendelkezik. A döntéshozás, azaz adott
+pillanatban valamilyen cselekvés kiválasztása a Monte Carlo tree search
+algoritmussal történik. Ez a Pokiéhoz hasonlóan egy szimuláción alapuló
+módszer.
 
-<!-- 4 oldal -->
-- Architekturális vázlat
-- Komponensek szerepe röviden
+A szimuláció közben az ellenfél szerepét itt is az ellenfélmodellező tölti be,
+ehhez a Poki-hoz hasonló neurális hálóval működő megoldást készítettem.
+
+Az ágens külön fut szerverként, és Pythonban íródott, a Flask keretrendszer
+segítségével. Előnye, hogy nagyon kevés munkával tudunk indítani webes
+szolgáltatásokat. A Python használatának a gyors fejlesztés, és tesztelés volt
+az előnye, valamint modulok nagy választéka a numerikus számításokhoz, és a gépi
+tanuláshoz.
+
+![Az ágens architektúrájának
+vázlata](figures/poker_architecture.png){width=75% #fig:arch}
+
+Az ágens architektúrájának vázlata a @fig:arch ábrán látható.
+
+- A PokerAcademy tetszőleges helyen fut, akár másik gépen is (én virtuális
+  gépen futtattam), és az előre beállított ellenfelek mellett a dummy ágensem
+  játszik.
+
+- A szerverként futó ágens ettől a klienstől kapja a játékból érkező
+  eseményeket, pl. amikor egy játékos cselekszik valamit, vagy az asztalhoz
+  lapot osztanak le, valamint visszaadja az éppen javasolt cselekvést, ha a
+  játékosunk jön.
+
+- A controller modul alapvetőn egy absztrakció a szerver fölé, hogy az ágens
+  működése átláthatóbb legyen. Ez hívja meg a döntéshozót, amikor cselekednie
+  kell a játékosunknak, tárolja el a befejezett játékokat, illetve szól az
+  ellenfélmodellezőnek ennek bekövetkeztéről.
+
+- Az adatbázis modul az adatbázisműveleteket biztosítja a komponenseknek az
+  implementációtól független formában. Az adatbázishoz MongoDB-t választottam,
+  a könnyű kezelhetőség miatt. A MongoDB konzolos felületével könnyen
+  lekérdezhetőek voltak az eltárolt adatok hibakeresés céljából.
+
+- Az MCTS döntéshozó visszaadja a játékosunk javasolt lépését, a Monte Carlo
+  szimuláció futtatásával. Futtatás közben az ellenfélmodellezőhöz fordul.
+
+- Az ellenfélmodellező modul egyik feladata adott időközönként kivenni az
+  adatbázisból a feldolgozott játékokat, és azok segítségével megtanítani a
+  játékosok modelljeiként szolgáló neurális hálókat. A játék tetszőleges
+  állapotában vissza tudja adni az éppen következő játékos legvalószínűbb
+  cselekvését, vagy pedig a Poki által használt valószínűségi hármasokat is
+  kérhetünk tőle, ennek szerepéről később lesz szó.
 
 
 Ellenfélmodellezés megvalósítása
 --------------------------------
 
-<!-- 4 oldal -->
-Poki féle neurális háló, saját választott featurekkel. Kézrange becslése:
-játszott játékok
+Az ellenfélmodellezés megvalósításánál a Poki által használt megoldást vettem
+alapnak. Az általam kiválasztott bemeneteket, amik a játék állapotáról készült
+jellegfüggvények (_featurek_), egy előrecsatolt neurális háló kapja meg, és az
+elvárt kimenet vagy a legvalószínűbb cselekvés, vagy egy valószínűségi hármas,
+ami tartalmazza a bedobás, megadás, emelés valószínűségeit (a Poki-hoz
+hasonlóan én is egynek vettem a megadást, és a check-et).
 
+A szimuláció végrehajtásához természetesen szükség van a játékosok
+kézskálájának becslésére. Itt egy egyszerű megoldást választottam. Kiszámoltam
+a játékosok VPIP-jét, ami egy mérőszám: megmondja, hogy az adott játékos az
+összes játék közül hányban vett részt aktívan, azaz fektetett be pénzt az első
+körben. Ehhez az kell, hogy megadja a nagyvakot, vagy ráemeljen.
+
+Ezt az értéket felhasználtam a tényleges skála megállapítása során, mégpedig
+úgy, hogy a 169 kezdőkézhez letöltöttem egy rangsort, ami érték szerint növekvő
+sorrendbe teszi őket. Ennek a listának akkora részhalmazát veszem, amekkora a
+játékos VPIP értéke. Pl. ha valaki a lapjainak 40%-át játssza meg, akkor
+feltételezem, hogy ez a legerősebb 40%.
 
 ### Gépi tanulás használata
 
+A játszott játékok az adatbázisba kerülnek. Innen adott játékonként az
+ellenfélmodellező lekéri a játékokat, és a játékokat feldolgozza az alábbi
+módon:
+
+- Minden egyes játékot újrajátszik a tárolt cselekvések alapján.
+- Az újrajátszott játék minden pillanatában a jellegfüggvényeket kiszámolom, és
+  eltárolom, az éppen következő játékos cselekvésével együtt. Ez egy darab
+  tanítópontot fog alkotni az adott játékosnak.
+- Az eljárást megismétlem az összes játékra.
+- Ha összegyűjtöttem a tanítópontokat a játékosokhoz, akkor inkrementális módon
+  megtanítom a már meglévő neurális hálónak. Ha még nincs ilyen, létrehozok
+  egyet.
+
+Ez a módszer elfogadható sebességű játékot eredményez, ha a tanítást mondjuk
+minden 100. játékonként végzem csak. Így mondhatjuk, hogy a tanulás online
+módon működik, azaz az ágens futás közben alkalmazkodik az ellenfelekhez.
+
+A modelleket jelenleg játékosszinten tárolom, viszont hatékonyabb megoldás
+lenne, ha pl. asztal/játékos bontásban készülne egy-egy modell. Így a rendszer
+automatikusan alkalmazkodna a különböző játékoshalmazokhoz. Hátránya persze,
+hogy minden halmazhoz újabb betanítást igényelne.
+
+A tanítást a scikit-learn Python modullal végzem. Ez az egyik legnépszerűbb
+Python csomag a gépi tanulásra. A Matlabhoz hasonlóan egyszerű használni.
+Támogatja MLP-k létrehozását több osztályos osztályozáshoz, valamint egy darab
+válasz helyett valószínűségi eloszlások visszaadását is. Ekkor a bemenetekre
+visszaadott válasz egy vektor lesz, akkora hosszúsággal, mint az osztályok
+száma, azaz az én esetemben 3.
+
 <!--
-- neurális hálók intro
-- on-line tanulás biztosítása
--->
-
-A featurek egy neurális háló által betanításra kerülnek, ahol a kimenet a
-végzett cselekvés a játék adott állapotában. A modelleket játékosszinten
-lehet tárolni, viszont   hatékony megoldás lehet az is, hogy asztal/játékos
-bontásban készülne egy-egy modell. Így a rendszer automatikusan alkalmazkodna
-a különböző játékoshalmazokhoz. Hátránya persze, hogy minden halmazhoz újabb
-betanítást igényelne.
-
-- Előrecsatolt neurális háló
-
-- scikit-learn
-
-
-### Játékállapot jellegfüggvényei
-<!-- jellemzők?? -->
-
-Az előbbieknek megfelelően az ellenfél cselekvéseinek előrejelzéséhez keresni
-kellett megfelelő jellemzőket, amiket fel lehet használni.  A jellegfüggvények
-(feature-ök) egy része a Poki által használtakból került ki
-[@davidson2002opponent, page 42].
-
-Megoldás az ellenfelek cselekvéseinek kiszámítására:
-
 A játékok adatait tároljuk, mégpedig úgy, hogy:
 - játékosok nevét, zsetonok számát, szék számát külön (a zsetonok száma nem
   fontos, ha kellően sok kezdő zsetont feltételezünk)
@@ -829,79 +904,66 @@ A játékok adatait tároljuk, mégpedig úgy, hogy:
   bedobás, megadás/check, emelés lehet
 
 - a leosztott közös lapokat, illetve ha megismerjük, a játékosok privát lapjait
-
-Adott játékonként a játékokat az ellenfélmodellező feldolgozza a következő módon:
-
-- A játékok adataiból jellegfüggvényeket generál. Minden egyes cselekvésre
-  kiszámolja őket. A bemenet a jelenlegi játék adatai, és a cselekvő játékosra
-  lesznek érvényesek.  A felhasznált jellegfüggvények:
-
-  - emelések száma (adott körre nézve)
-
-  - pot odds: $megadandó\_zsetonok / (megadandó\_zsetonok + pot)$
-
-  - pozíció: a játékos asztalnál elfoglalt helyének "jósága". 0-tól 1-ig
-    terjed, ahol 1 a buttonhoz legközelebbi ülőhely, a 0 pedig a legtávolabbi
-
-  - megadandó tétek száma: a tanítás miatt ez is 0-tól 1-ig terjed, ahol 1 a
-    lehető legtöbb tét (4 darab)
-
-  - befektetett-e a játékos pénzt (0 vagy 1)
-
-  - aktív játékosok száma (akik még az adott körben játékban vannak)
-
-  - jelenlegi kör száma: a kör sorszáma, szintén 0 és 1 közé normalizálva, azaz
-    $n / 4$, ahol $n$ a jelenlegi kör száma 0-tól 3-ig
-<!--
-  - leosztott lapok "szárazsága": ez azt mutatja meg, hogy sor, vagy flöss (5
-    egymást követő érték, vagy 5 egyforma szín) milyen valószínűséggel
-    alakulhat ki. A közös lapok között szereplő egymást követő értékek, vagy
-    egyforma színű lapok jelentősen emelik a valószínűségeket.
-
-  A legutolsó jellegfüggvény a leosztott lapokkal dolgozik. Ezeket máshogy is figyelembe
-  lehet venni, például az adott ellenfél kézerősségének becslésénél, ami
-  szintén lehetne feature.
 -->
 
-### Ellenfél kézerőssége:
+### Játékállapot jellegfüggvényei
 
-<!-- todo: bővebben -->
-A játékosok lapeloszlásána:
+Az előbbieknek megfelelően az ellenfél cselekvéseinek előrejelzéséhez kerestem
+megfelelő jellemzőket, amiket fel lehet használni.  A jellegfüggvények
+(feature-ök) egy része a Poki által használtakból került ki
+[@davidson2002opponent, page 42], viszont pár helyen módosítottam.
 
-Erre a szimuláció során lenne szükség, amikor kiértékelnénk egy-egy szimulált
-játékot. A legegyszerűbb megoldás azon játékok számolása, ahol az ellenfél
-zsetont fektetett be (beszállt a játékba szándékosan), és az érték leosztása az
-összes játék számával. Ebből, optimálisan játszó ellenfelet feltételezve,
-következtethetünk a kezdő lapok erősségére.
+A választott jellegfüggvények a következők:
 
-Az ágens nem vizsgál explicit módon kézerősséget, ezt a szimuláció során a
-neurális háló, és a végén a kiértékelés adja.
+  - Emelések száma az adott körben
 
+  - Pot odds
+
+  - Pozíció: a játékos asztalnál elfoglalt helyének "jósága". Ez gyakorlatilag
+    azt jelenti, hogy hanyadik a játékos a körben
+
+  - Megadandó tétek száma: ez 0-tól 4-ig terjedhet^[A tétek maximum száma
+    konvenció szerinti. Általában a maximum 4]
+
+  - Befektetett-e a játékos pénzt (0 vagy 1)
+
+  - Aktív játékosok száma (akik még az adott körben játékban vannak)
+
+  - Jelenlegi kör száma: a kör sorszáma 0-tól 3-ig
+
+  - Van-e ász a közös lapok között
+
+  - Van-e király a közös lapok között
+
+Az értékek mindegyike 0 és 1 közé van normalizálva, mivel a neurális háló
+érzékeny a bemeneteire.
 
 ### Kísérletek
 
-Kezdetben a tábla állapotát felhasználó feature nem készült. 1000 mintapontot
-felhasználva, a Jagbotok játékából történt a teszt.
+Az első kísérleteket 1000 játék adatait felhasználva végeztem. Teszteléshez
+Jagbotokat használtam fel, ami az egyik beépített ellenfél a PokerAcademy-ben.
+Statikus, szakértői rendszer alapú játékot végez, és kezdő játékosok számára készült.
 
-A pontosság: ~60%
+A kezdeti pontosság kb. 60% volt. Ez teljesen naiv paraméterezéssel, és
+featurehalmazzal történt.
 
-TODO: megvizsgálni pontok számának variálásával.
+A tanítás eredményességét megvizsgáltam a neuronok számának változtatásával is.
+Látható, hogy egy darabig növekedést érhetünk el a neuronok számának
+növelésével. 
 
-Layer sizes   |     Score
-------------- |  --------
-[5, 5]        |  0.62649
-[7, 5]        |  0.63168
-[15, 12]      |  0.649942
-[20, 17]      |  0.678008
-[15, 12, 10]  |  0.654171
-[30, 25]      |  0.678585
+Rétegek neuronjai | Pontosság
+----------------- | --------
+[5, 5]            | 0.62649
+[7, 5]            | 0.63168
+[15, 12]          | 0.649942
+[20, 17]          | 0.678008
+[15, 12, 10]      | 0.654171
+[30, 25]          | 0.678585
 
-
-Egy pontig növekedést érhetünk el a neuronok számának növelésével.
-
-- Konfúziós mátrix [@davidson2000improved]: ez a metrika megmutatja, hogy a
-  prediktorunk milyen típusú hibákat produkál. Az osztályozások eloszlása
-  látható rajta az elvárt, és a tényleges válaszok kombinációira vetítve.
+Az ellenfélmodell pontosságának mérésére jó eszköz a konfúziós mátrix. ez a
+metrika megmutatja, hogy a prediktorunk milyen típusú hibákat produkál. Az
+osztályozások eloszlása látható rajta az elvárt, és a tényleges válaszok
+kombinációira vetítve[@davidson2000improved].
 
 Az alábbi mátrixot kaptam teszteléskor (1800 tanítópont, 200 tesztpont, 1 adott
 ellenfélre):
@@ -923,18 +985,124 @@ emeléseket nem azonosítja elég hatékonyan.
 MCTS algoritmus
 ---------------
 
-- A Monte Carlo algoritmusokről
-- A Monte Carlo fakeresésről
+A Monte Carlo módszerek véletlenszerű mintavételezésen alapuló közelítését
+kísérlik meg egy-egy adott problémának. Tulajdonképpen a Poki által használt
+szimuláció is egy Monte Carlo módszer. 
+
+A Monte Carlo fakeresés viszont egy konkrét algoritmus, ami játékfákban való
+keresésre lett kitalálva. A korábban látott szimuláció kimeneteleit képes
+súlyozni, mégpedig olyan módon, hogy jobban megtalálja a lehető legjobb
+választást.
+
+Az algoritmus egy játékfát épít fel olyan módon, hogy közben a levelekből
+szimulációkat indítva dönti el, hogy abba az irányba haladva mi lenne a játék
+kimenetelének várhatóértéke. Sok szimulációt végezve ez az érték konvergál egy
+irányba.
+
+A játékfa csúcsai a játék egy állapota, ahol tudjuk, hogy éppen ki következik.
+
+### Az algoritmus lépései
+
+Az algoritmus igen egyszerű módon működik. Én magam kicsit változtattam rajta,
+hogy jobban megfeleljen a céljaimnak. Az alap MCTS lépései[@MonteCar27:online]:
+
+- Szelekció: A fa gyökeréből indulunk. A gyerekek közül mindig kiválasztunk
+  egyet, amíg el nem érünk egy levélhez. A szelekcióra több fajta stratégia
+  létezik.
+
+- Expanzió: Létrehozunk egy, vagy több gyereket a kiválasztott levélből.
+
+- Szimuláció: A létrehozott levélből lejátszunk egy játékot, amíg nincs vége,
+  vagy fix lépésig. Nyilván az utóbbi esetben szükség van egy megfelelő
+  kiértékelőfüggvényre, ami valami heurisztika alapján megmondja az adott
+  állapot értékét, ezért a pókernél ez nem alkalmazható, végig kell menni a
+  játék végéig.
+
+- Propagálás: A szimuláció eredményét visszaterjesztjük a gyökérig, mégpedig
+  úgy, hogy a csúcsok szüleit követjük visszafele. Egy csúcsnak kétféle értéke
+  van: a látogatások száma, és az értéke. Az előbbit eggyel növeljük, az
+  utóbbit pedig annyival, amennyi a szimuláció eredménye.
+
+Az algoritmus nem specifikál több mindent. Az egyik, hogy hogyan választunk a
+szelekciókor gyerekcsúcsokat. Itt figyelembe kell vennünk a játék tulajdonságait.
+
+Az egyik legnagyobb gond az volt, hogy mi lesz a közös lapok leosztásakor. Erre
+azt találtam ki, hogy legyen a közös lap leosztása is a játékfa állapotainak
+része. Így minden kör végén beiktatok egy speciális kártyacsúcsot, aminek a
+gyerekei a leosztott lapoknak megfelelően ágaznak el. Így a szelekció 3 féle lehet:
+
+- Saját játékosunk jön: Itt az UCT képletet használtam fel, ami biztosítja a
+  fa elég jó bejárását. Erről saját játékosunk lépéseinél kell erről
+  gondoskodnunk, mivel a többi lépést valójában nem mi irányítjuk.
+
+- Ellenfél jön: Itt használjuk fel az ellenfélmodellező valószínűségi
+  eloszlásait. A visszaadott valószínűségek alapján választunk egy cselekvést.
+  Így a fában való mozgás tükrözni fogja az ellenfélmodellező által alkotott
+  képet.
+
+- Új kör, azaz kártya leosztása jön: Itt véletlenszerűen tudunk választani
+  csak. Limitálhatjuk esetleg a maximum csúcsok számát.
+
+#### Az UCT képlet
+
+A fő kihívás a gyerekcsúcsok kiválasztásánál, hogy a már nyereséges részfák
+_exploitálása_, és a még nem nagyon szimulált részfák _felfedezése_ között
+egyensúlyt találjunk. Az UCT formula, ami pont ezt a feladatot oldja meg:
+
+$$ \frac{w_i}{n_i} + c \sqrt{\frac{\ln{t}} {n_i}} $$
+
+A képletben szereplő $w_i$ az adott csúcs értéke, $n_i$ a csúcs látogatásainak
+száma, $t$ a szülő látogatásainak száma, $c$ pedig az explorációs paraméter,
+ami elméletben egyenlő $\sqrt{2}$-vel, a gyakorlatban viszont empirikus módon
+választják.
+
+#### Szimuláció
+
+A szimuláció során az adott csúcs lemásolódik, így kapunk egy eldobható
+játékállapotot, amit változtathatunk szabadon. A szimuláció elején beállítunk
+véletlenszerű lapokat az ellenfeleknek, a kézskálájuknak megfelelően.
+
+Az ellenfél lépése során az ellenfélmodellezőtől kérünk az adott játékállapotra
+tanácsot, hogy mit lépne az az ellenfél. A saját játékosunkat pedig
+véletlenszerűen léptetjük. <!--todo-->
+
+Addig megyünk így a szimulációval, amíg vége nincs a játéknak, vagy bedobja a
+mi játékosunk a lapjait. <!--todo--> A játék végén kiértékeljük a játékosunk
+hasznát, ami megegyezik az általa nyert, vagy veszített zsetonokkal.
+
+
+### Gyakorlati megfontolások
+
+Az én implementációmban az expanzió mindig egy darab csúcsot csinál. Ezt úgy
+oldottam meg, hogy az adott csúcsok transzparens módon választanak gyereket,
+attól függetlenül, hogy az létezik-e, vagy még nem. Ha nem létezik,
+létrehozzák, és azt adják vissza. A szelekció addig tart, amíg egy újonnan
+létrehozott gyereket kapunk vissza.
+
+Ez azért történik így, mert a kártyák leosztásánál nagyon sok gyereket kellene
+létrehozni egyszerre. Ezt megkerülendő inkább igény szerint hozok létre új
+csúcsokat.
+
 
 ### Optimizáció
 
-- pszeudorandom műveletek a konstans futásidőhöz
-- vmprof
-- költséges műveletek
-    -deepcopy
-    -UTC algoritmus számítása
-    -children dictionary
-- gains: 30 sec -> 8 sec -> 3.5 sec
+A futást több helyen kellett optimizálni, mivel minimum 2000 iterációra
+törekedtem minden szimuláció során. Kezdetben a program 30 másodperc alatt
+végezte el ezt az iterációszámot. A szimulációk mind pszeudorandom módon
+történtek, így mindig ugyanazt az eredményt kaptam. Ez segített a futásidő
+mérésében. Több dolgon tudtam javítani a `vmprof` nevű Python profilozó
+segítségével:
+
+- A gyerekek tárolását kezdetben egy Python dictionary végezte. Ennek másolása,
+  illetve listák készítése a tárolt értékekből nagyon költséges volt. Később
+  listában tároltam a gyerekeket.
+
+- Deepcopy-t használtam a csúcsok másolására. Ez egy nagyon drága művelet, mert
+  kiszűri a körkörös referenciákat az objektumok között. Ennek kiiktatásával
+  nagyon sokat lehetett nyerni.
+
+A kezdeti 30 másodpercet így 3 és fél másodpercre sikerült csökkenteni.
+
 
 # Eredmények értékelése
 <!-- 5 oldal -->
