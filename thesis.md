@@ -114,17 +114,38 @@ Budapest, \today
 Kivonat/Abstract {-}
 ================
 
+A számítógépes póker a mesterséges intelligencia egy régóta kutatott területe.
+A játék tulajdonságai alkalmassá teszik arra, hogy számos algoritmust és
+módszert lehessen vizsgálni ellenőrzött, reprodukálható körülmények között.
 
+A munkám során felkutattam a számítógépes póker eddigi eredményeit, majd ezek
+alapján megterveztem egy egyszerű ágenst, ami gépi tanulást alkalmaz az
+ellenfél modellezésére, és egy szimulációs módszert használ a döntéseinek
+meghozatalára.
+
+Az elkészült ágenst teszteltem más, meglévő játékosokkal a PokerAcademy nevű
+keretrendszerben.
+
+Abstract {-}
+--------
+
+Computer poker is a widely researched field of artificial intelligence. Because
+of it's properties, it is used as a testbed for creating new algorithms in a
+controlled environment.
+
+During my work I researched existing papers about computer poker, then I
+applied it by designing my own computer poker player. My bot uses a machine
+learning based opponent modelling method, and a simulation based method for
+making decisions.
+
+I benchmarked the finished bot with other, existing bots in the PokerAcademy
+simulator program.
 
 
 Bevezetés
 =========
 
 <!-- 1 oldal -->
-A számítógépes póker a mesterséges intelligencia egy régóta kutatott területe.
-A játék tulajdonságai alkalmassá teszik arra, hogy számos algoritmust és
-módszert lehessen vizsgálni ellenőrzött, reprodukálható körülmények között.
-
 Azért választottam ezt a témát, mert régebben hobbiszinten én is pókereztem
 internetes pókertermekben, így felkeltette az érdeklődésemet, hogy ezt a
 játékot számítógép is végezheti, ráadásul sokszor hatékonyabban, mint profi
@@ -164,10 +185,10 @@ választ adni.
 
 Ezek után a saját ágensem architektúráját fogom ismertetni, a rendszerterven
 kívül a megvalósítás részleteivel együtt, kitérve az ellenfélmodellezésre és a
-döntéshozásra is. <!-- todo: tesztek hol lesznek-->
+döntéshozásra is.
 
-Végül értékelem az eredményeket, és megvizsgálom hogy milyen lehetőségek vannak
-a további fejlesztésekre.
+Végül bemutatom, és értékelem az eredményeket, és megvizsgálom hogy milyen
+lehetőségek vannak a további fejlesztésekre.
 
 A pókerjáték
 ============
@@ -740,6 +761,8 @@ A PokerAcademy eredetileg egy edzőprogram emberi játékosoknak, de beállítha
 úgy is, hogy csak gépi játékosok játsszanak egymással. Saját gépi játékost is
 adhatunk a programhoz.
 
+![A PokerAcademy 2.5](figures/pokeracademy.png){width=60%}
+
 A keretrendszer Java-t használ, és Windows alatt fut. A hozzá készített
 ágenseket (a játékban botnak hívják) plugin formájában kell mellékelni, és az
 erre a célra készített Meerkat API-t^[Ez az API botok írását teszi lehetővé a
@@ -935,6 +958,8 @@ A választott jellegfüggvények a következők:
 
   - Van-e király a közös lapok között
 
+  - Az ellenfél által végzett utolsó cselekvés emelés-e
+
 Az értékek mindegyike 0 és 1 közé van normalizálva, mivel a neurális háló
 érzékeny a bemeneteire.
 
@@ -942,14 +967,13 @@ Az értékek mindegyike 0 és 1 közé van normalizálva, mivel a neurális hál
 
 Az első kísérleteket 1000 játék adatait felhasználva végeztem. Teszteléshez
 Jagbotokat használtam fel, ami az egyik beépített ellenfél a PokerAcademy-ben.
-Statikus, szakértői rendszer alapú játékot végez, és kezdő játékosok számára készült.
+Nem változtatja a saját játékát, ezért könnyebb dolgunk van, ha meg akarjuk
+tanulni azt.
 
 A kezdeti pontosság kb. 60% volt. Ez teljesen naiv paraméterezéssel, és
-featurehalmazzal történt.
-
-A tanítás eredményességét megvizsgáltam a neuronok számának változtatásával is.
-Látható, hogy egy darabig növekedést érhetünk el a neuronok számának
-növelésével. 
+jellemzőkkel történt. A tanítás eredményességét megvizsgáltam a neuronok
+számának változtatásával is. Látható, hogy egy darabig növekedést érhetünk el
+a neuronok számának növelésével.
 
 Rétegek neuronjai | Pontosság
 ----------------- | --------
@@ -960,13 +984,24 @@ Rétegek neuronjai | Pontosság
 [15, 12, 10]      | 0.654171
 [30, 25]          | 0.678585
 
+### Tanítás paraméterei
+
+A scikit-learn egy főleg kezdők által használt library, viszont azért itt is
+viszonylag sok mindent állíthatunk a neurális háló tanításán.
+
+`todo: egyéb paraméterek állítása`
+
+### Konfúziós mátrix
+
 Az ellenfélmodell pontosságának mérésére jó eszköz a konfúziós mátrix. ez a
 metrika megmutatja, hogy a prediktorunk milyen típusú hibákat produkál. Az
 osztályozások eloszlása látható rajta az elvárt, és a tényleges válaszok
-kombinációira vetítve[@davidson2000improved].
+kombinációira vetítve[@davidson2000improved]. A mi esetünkben ez egy 3x3-as
+mátrix lesz, ahol ideális esetben csak a főátló értékei nem nullák. Ekkor az
+osztályozást tökéletesen végrehajtottuk.
 
-Az alábbi mátrixot kaptam teszteléskor (1800 tanítópont, 200 tesztpont, 1 adott
-ellenfélre):
+Az alábbi mátrixot kaptam teszteléskor (1800 játék tanításhoz, 200
+teszteléshez, Jagbot típusú ellenfél):
 
 Act\\Pred  |   Fold |   Call |   Raise
 ---------- | ------ | ------ | -------
@@ -976,10 +1011,9 @@ Raise      |   0.06 |   0.11 |    0.10
 
 Látható, hogy az ellenfélmodell a bedobást és a megadást tudja jobb
 valószínűséggel megbecsülni. Az emeléseket arányaiban többször osztályozta
-félre a háló.
-
-Több mátrixot is vizsgálva, egyértelmű volt, hogy a jelenlegi ellenfélmodell az
-emeléseket nem azonosítja elég hatékonyan.
+félre a háló. A többi Jagbot típusú játékos vizsgálatakor is hasonló
+eredményeket kaptam.
+<!--Todo: megvizsgálni Poki-val is-->
 
 
 MCTS algoritmus
@@ -987,7 +1021,7 @@ MCTS algoritmus
 
 A Monte Carlo módszerek véletlenszerű mintavételezésen alapuló közelítését
 kísérlik meg egy-egy adott problémának. Tulajdonképpen a Poki által használt
-szimuláció is egy Monte Carlo módszer. 
+szimuláció is egy Monte Carlo módszer.
 
 A Monte Carlo fakeresés viszont egy konkrét algoritmus, ami játékfákban való
 keresésre lett kitalálva. A korábban látott szimuláció kimeneteleit képes
@@ -1064,14 +1098,18 @@ véletlenszerű lapokat az ellenfeleknek, a kézskálájuknak megfelelően.
 
 Az ellenfél lépése során az ellenfélmodellezőtől kérünk az adott játékállapotra
 tanácsot, hogy mit lépne az az ellenfél. A saját játékosunkat pedig
-véletlenszerűen léptetjük. <!--todo-->
+véletlenszerűen léptetjük.
 
 Addig megyünk így a szimulációval, amíg vége nincs a játéknak, vagy bedobja a
-mi játékosunk a lapjait. <!--todo--> A játék végén kiértékeljük a játékosunk
-hasznát, ami megegyezik az általa nyert, vagy veszített zsetonokkal.
+mi játékosunk a lapjait. Ezek azok az állapotok, ahol tudunk mondani valamit az
+ágens által elért eredményről. A végén kiértékeljük a játékosunk hasznát,
+ami megegyezik az általa nyert, vagy veszített zsetonokkal.
 
 
 ### Gyakorlati megfontolások
+
+Az ágens fejlesztésekor az alap MCTS algoritmuson több helyen is végeztem apró
+módosításokat, hogy hatékonyabb működést érjek el.
 
 Az én implementációmban az expanzió mindig egy darab csúcsot csinál. Ezt úgy
 oldottam meg, hogy az adott csúcsok transzparens módon választanak gyereket,
@@ -1083,43 +1121,172 @@ Ez azért történik így, mert a kártyák leosztásánál nagyon sok gyereket 
 létrehozni egyszerre. Ezt megkerülendő inkább igény szerint hozok létre új
 csúcsokat.
 
+Később rájöttem, hogy a fa nagy részét feleslegesen állítom elő, és így a
+szimulációk egy része is feleslegesen fut. Ha a játékosunk bedobja a lapjait,
+azonnal meg tudjuk mondani, hogy mi lesz számunkra a játék kimenetele, így a
+szimulációt is felesleges elvégezni. Így a fa minimum $1/3$-át nem kell
+kibontanunk.
 
-### Optimizáció
+
+#### Optimizáció
 
 A futást több helyen kellett optimizálni, mivel minimum 2000 iterációra
-törekedtem minden szimuláció során. Kezdetben a program 30 másodperc alatt
+törekedtem minden szimuláció során. Kezdetben a program 8 másodperc alatt
 végezte el ezt az iterációszámot. A szimulációk mind pszeudorandom módon
 történtek, így mindig ugyanazt az eredményt kaptam. Ez segített a futásidő
 mérésében. Több dolgon tudtam javítani a `vmprof` nevű Python profilozó
 segítségével:
 
-- A gyerekek tárolását kezdetben egy Python dictionary végezte. Ennek másolása,
-  illetve listák készítése a tárolt értékekből nagyon költséges volt. Később
-  listában tároltam a gyerekeket.
+- A program futása során lecsökkentettem a fölösleges objektumkreálások számát.
+  Ez főleg az ideiglenes listák kreálására vonatkozott, pl. dictionary
+  objektumok értékeiből.
 
-- Deepcopy-t használtam a csúcsok másolására. Ez egy nagyon drága művelet, mert
-  kiszűri a körkörös referenciákat az objektumok között. Ennek kiiktatásával
-  nagyon sokat lehetett nyerni.
+- Először deepcopy-t használtam a csúcsok másolására. Ez egy nagyon drága
+  művelet, mert kiszűri a körkörös referenciákat az objektumok között. Ennek
+  kiiktatásával nagyon sokat lehetett nyerni. Később a sima copy művelet
+  helyett a c++-ban használatos assignmenthez hasonló saját függvényt
+  használtam, ami tovább javított a teljesítményen.
 
-A kezdeti 30 másodpercet így 3 és fél másodpercre sikerült csökkenteni.
+- A szimulációkhoz nem kell mindig új csúcsot létrehozni, hanem hatékonyabb egy
+  darabot létrehozni, aminek mindig átadjuk a szimuláció kezdeti állapotát.
+  Ez egyszerűen megoldható volt, mivel egy szálon fut az algoritmus.
+
+A kezdeti futásidőt az algoritmus módosításával, és a Python kód
+optimizálásával körülbelül a tizedére sikerült csökkenteni. Később a játékos
+éles futása közben is végeztem profilozást, és ott már a scikit-learn volt a
+szűk keresztmetszet processzor szempontjából, így nem végeztem további
+optimizálást.
 
 
 # Eredmények értékelése
-<!-- 5 oldal -->
+
+Az ellenfél modellezésénél voltak konkrét módszereink a hatékonyság mérésére
+(neurális háló eredményessége), viszont ezen kívül már csak a rendszer egésze
+az, aminek számszerűsíthető az eredményessége. Ezt a korábban is használt
+tesztkonfigurációk használatával végeztem.
+
+Míg a tanítás fejlesztése során 2000-nél is több játék adatait használtam fel,
+itt jóval kevesebbet vizsgáltam a mérésekhez. Mivel már a megtanult modellel
+rendelkezett a játékosom a játék elején, ezért tudtam, hogy több játéktól nem
+várható a hatékonyság növekedése, valamint az ágens válaszideje elég nagy volt:
+egy-egy válasz akár 3-4 másodpercig is eltartott, de persze ez több tényezőtől
+is függött.
+
+Általában a játék vége felé gyorsabban tudott dönteni az ágens,
+a rövidebb rolloutok miatt, valamint ha a bedobás mellett döntött, akkor azt
+gyorsan tudta végezni az azonnali kiértékelés miatt.
+
+Kezdetben 2000 iterációt céloztam meg egy döntés elvégzése során. Ez
+tesztkörnyezetben, azaz külön futtatva az MCTS döntéshozót, és a többi
+komponenst helyettesítve *mock*okkal, még reálisnak tűnt a kevesebb, mint 1
+másodperces döntéseket nézve. Később az éles futtatás közben rájöttem, hogy ezt
+nem lehet tartani, ezért csak feleannyi iterációt állítottam be, és még így is
+jóval tovább tartott egy-egy döntés meghozatala.
+
+A PokerAcademy minden játékoshoz számon tartott statisztikákat, és grafikonokat
+is tudott generálni, így a megjelenítéssel könnyű dolgom volt.
 
 
 Tesztkonfigurációk
 ------------------
 
-<!-- Todo -->
-
 A teszteléshez használt konfigurációkat a Poker Academy-vel könnyen össze
-lehetett állítani, majd menteni.
+lehetett állítani, majd menteni. A lejátszott játékokat el tudtam tárolni az
+adatbázisban. Az egyszerűség kedvéért minden egyes tesztkonfiguráció, azaz
+játékosok halmazának játékait külön adatbázisban tároltam. Ez elég
+egyszerű volt, mert egy újonnan létrehozott, üres MongoDB-t a futó ágens rögtön
+tudott használni.
 
 ### Jagbotok
 
 A Jagbot egy szakértői rendszer alapú ágens. Teljesen statikus módon játszik,
 ezért alkalmas arra, hogy a könnyű ellenfél szerepét betöltse.
 
-A tesztkonfiguráció 4 darab Jagbotból, és az ágensünkből állt. Ezzel 2000 darab
-játékot játszattam, amit fel tudtam használni a tanítás teszteléséhez.
+Az egyik tesztkonfiguráció 4 darab Jagbotból, és az ágensünkből állt. 500
+körüli játék után volt látható, hogy valamennyivel gyengébben játszik
+(@fig:jagbots-5max ). Az előbbi asztalnál 0.26 nagyvakot vesztett átlagosan
+játékonként. Rajta kívül egy Jagbot volt még veszteséges, és a legjobban játszó
+ágens átlagosan 0.2 nagyvakkal lett gazdagabb játékonként.
+
+![Az ágens teljesítménye a Jagbotok
+ellen](figures/jagbots-5max.png){width=65% #fig:jagbots-5max}
+
+Az ágens játékstílusát nyomon lehetett követni a keretrendszerben. A Jagbotok
+ellen játszott játékok adatai alapján az ágens a kezek 26%-ával száll játékba,
+ami viszonylag feszes^[Így nevezik, ha egy játékos kevés lappal játszik.]
+játéknak számít: a többi ágens közül ő játszott a legkevesebb kézzel.
+
+Önmagában ez nem mond sokat egy játékos játékáról. Megvizsgálva az ágens
+játékát bizonyos lapok esetében, felfedezhetünk hibákat is a játékban: például
+$\heartsuit A, \clubsuit A$-t bedobott a játék elején, ami a legtöbb esetben
+nem jó döntés.
+
+A tesztelést kipróbáltam egy darab Jagbottal, itt is gyengébbnek bizonyult
+(@fig:jagbot-headsup).
+
+![Az ágens teljesítménye egy Jagbot
+ellen](figures/jagbot-headsup.png){width=65% #fig:jagbot-headsup}
+
+#### Kézskála bővítése
+
+Az ágens nagyon sok kezet dobott be. A játékok végigjátszását elemezve, gyakran
+bedobott olyan lapokat is, amelyekkel jó eséllyel nyerhetett volna, még első
+ránézésre is. A problémára találtam egy gyorsan kivitelezhető megoldást.
+
+Mivel az MCTS keresés közben a bedobásunk eredményét közvetlenül számoljuk, itt
+akár megadhatunk egy eltolást is neki: így az ágens még rosszabbnak fogja hinni a
+bedobást, mint amennyit valójában veszíthet vele. Be is állítottam egy ilyen
+értéket, kezdetben 1-re. Ez azt jelenti, hogy amikor az ágens szimuláció közben
+a bedobást választja, a megtett zsetonjainál egyel többet fog
+visszaterjeszteni, mint veszteség.
+
+Ezzel a súlyozással is leültettem játszani az ágenst az 5 fős asztalhoz.
+
+
+### Pokibotok
+
+A Pokiról már sokminden elhangzott korábban. A PokerAcademy-ben található
+változat az említett ágens teljes értékű, paraméterezhető változata, amivel
+sokféle játékstílust tud játszani. A tesztekhez az előbbi asztalhoz hasonlóan,
+4 darab, átlagosan játszó Poki-t választottam ki.
+
+A Pokik ellen kezdetben hasonlóan játszott az ágens: 200 játékot vizsgálva
+átlagosan 0.37 nagyvakot vesztett játékonként, ezzel az utolsóként kerülve ki a
+mezőnyből.
+
+![Az ágens teljesítménye a Pokibotok
+ellen](figures/pokibots-5max.png){width=65% #fig:pokibots-5max}
+
+
+Értékelés
+---------
+
+Összességében elmondhatjuk, hogy a többi megismert ágenshez képest nagyon
+egyszerű struktúrával rendelkező játékosunk viszonylag jól teljesít.
+'todo: hogy játszott a Jagbotok, Pokik ellen?'
+
+Szakértői információt nagyon kevés helyen használ fel, a Loki/Poki-val
+ellentétben a flop előtt sem használ fel ilyen tudást a döntéseihez.
+A Monte Carlo fakeresés egy előrelépést jelent a puszta szimulációhoz képest,
+viszont ennél a módszernél is megoldandó marad az a probléma, hogy mit lépjen a
+saját játékosunk szimuláció közben. Erre szakértői tudás híján az ágens az
+ellenfélmodellekből kap választ.
+
+### További teendők
+
+Az ágenst számos helyen lehet bővíteni. Az ellenfél lapskáláját sokkal
+pontosabban meg tudná becsülni, ha ehhez figyelembe venné valamilyen módon a
+már megtörtént cselekvéseket egy játék közben. Így a kiértékelések eredménye
+jobban tükrözné a valós esélyeinket.
+
+Az ellenfélmodell másik részén, a cselekvések előrejelzésén is lehetne
+pontosítani: jelenleg csak az ellenfél által végzett utolsó cselekvést vesszük
+figyelembe. Szintén nem nézünk túl sok információt a leosztott lapokról.
+
+Ami a számítások sebességét illeti: a jelenlegi módszer alkalmas arra, hogy
+bemutassa a rendszer működését, viszont sokkal több iterációt is lehetne
+végezni az MCTS közben. Ettől lehet, hogy javulna az előrejelzések pontossága
+is.
+
+Hivatkozások
+============
