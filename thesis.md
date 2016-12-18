@@ -1377,8 +1377,8 @@ mezőnyből.
 ellen](figures/pokibots-5max.png){width=65% #fig:pokibots-5max}
 
 
-Értékelés
----------
+Összefoglalás
+-------------
 
 Összességében elmondhatjuk, hogy a többi megismert ágenshez képest nagyon
 egyszerű struktúrával rendelkező játékosunkon még van mit javítani.
@@ -1427,11 +1427,13 @@ végezni a MCTS közben. Ettől lehet, hogy javulna az előrejelzések pontossá
 is.
 
 
-### Köszönetnyilvánítás
+Köszönetnyilvánítás
+-------------------
 
 Szeretném megköszönni Dobrowiecki tanár úrnak a segítőkészségét és az alapos
-munkáját, valamint hogy az utolsó pillanatban is elvállalta, hogy a konzulensem
-lesz, és kiírta a témát annak ellenére, hogy nem a szakterülete.
+munkáját, valamint hogy a lehető legutolsó pillanatban is elvállalta, hogy a
+konzulensem lesz, és kiírta a témát annak ellenére, hogy nem kifejezetten a
+szakterülete.
 
 
 Hivatkozások

@@ -38,6 +38,16 @@
       <term name="available at">available</term>
     </terms>
   </locale>
+  <locale xml:lang="hu">
+    <terms>
+      <term name="chapter" form="short">ch.</term>
+      <term name="presented at">presented at the</term>
+      <term name="available at">available</term>
+      <term name="page" form="short">p.</term>
+      <term name="volume" form="short">vol.</term>
+      <term name="issue" form="short">no.</term>
+    </terms>
+  </locale>
   <!-- Macros -->
   <macro name="edition">
     <choose>
