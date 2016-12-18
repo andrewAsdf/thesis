@@ -2,8 +2,8 @@
 bibliography: bibliography.bib
 csl: ieee.csl
 fontsize: 11pt
-margin-left:  3.5cm
-margin-right: 3.5cm
+margin-left:  4cm
+margin-right: 3cm
 margin-top: 3cm
 margin-bottom: 3cm
 linestretch:  1.25
