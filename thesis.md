@@ -108,7 +108,9 @@ Budapest, \today
 
 
 \setcounter{tocdepth}{1}
+\newgeometry{top=2.5cm,bottom=2.5cm}
 \tableofcontents
+\restoregeometry
 
 
 Kivonat/Abstract {-}
@@ -1425,15 +1427,6 @@ Ami a számítások sebességét illeti: a jelenlegi módszer arra alkalmas, hog
 bemutassa a rendszer működését, viszont sokkal több iterációt is lehetne
 végezni a MCTS közben. Ettől lehet, hogy javulna az előrejelzések pontossága
 is.
-
-
-Köszönetnyilvánítás
--------------------
-
-Szeretném megköszönni Dobrowiecki tanár úrnak a segítőkészségét és az alapos
-munkáját, valamint hogy a lehető legutolsó pillanatban is elvállalta, hogy a
-konzulensem lesz, és kiírta a témát annak ellenére, hogy nem kifejezetten a
-szakterülete.
 
 
 Függelék {-}
