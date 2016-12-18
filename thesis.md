@@ -134,7 +134,7 @@ of it's properties, it is used as a testbed for creating new algorithms in a
 controlled environment.
 
 During my work I researched existing papers about computer poker, then I
-applied them to designing my own computer poker player. My bot uses a machine
+applied them to design my own computer poker player. My bot uses a machine
 learning based opponent modelling method and a simulation based method for
 making decisions.
 
@@ -1023,7 +1023,7 @@ alatt volt.
 
 #### Tanítás paraméterei
 
-A scikit-learn egy főleg kezdők által használt library, viszont azért itt is
+A scikit-learn egy főleg kezdők által használt könyvtár, viszont azért itt is
 viszonylag sok mindent állíthatunk a neurális háló tanításán. A tanítás közben
 a háló méretét, illetve a súlymódosításhoz használt eljárást vizsgáltam. Az
 `lbfgs`[@Limitedm93:online] és az `adam`[@DBLP:adam] két
@@ -1237,7 +1237,7 @@ szűrni a döntéshozóban.
 A felépített játékfa helyességét vizuális módon is tudtam ellenőrizni: a
 tesztjátékok eredményeképpen létrejött fát kirajzoltam. Egy ilyen fa látható a
 @fig:mcts-test ábrán. A csúcsokon látható a soron következő játékos neve, a
-visszaterjesztett érték, a látogatások száma, az előző cselekvés, és a
+visszaterjesztett érték, a látogatások száma, az előző cselekvés és a
 jelenlegi kör száma. Ez megkönnyítette a működés hibakeresését, és
 ellenőrzését.
 
@@ -1401,7 +1401,7 @@ sem használ fel ilyen tudást a döntéseihez.
 
 A munkám során a korábban önálló laboron nagyrészt általam megtervezett
 architektúrát valósítottam meg. Az implementáció egésze a sajátom, kivéve a
-felhasznált szimulációs szoftvert és a nevezett librarykat.
+felhasznált szimulációs szoftvert és a nevezett könyvtárakat.
 
 A kész ágens, valamint a Java nyelven íródott kliens megtalálható Githubon,
 nyílt forrású szoftverként[@GitHuban99:online; @GitHuban91:online].
