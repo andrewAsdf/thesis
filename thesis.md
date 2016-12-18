@@ -216,14 +216,14 @@ különbözhetnek, a teljesség igénye nélkül:
     privát lapokat kicserélni, valamelyikben viszont többször is.
 
   - A győztes játékosnak a legjobb, vagy a legrosszabb kézzel kell
-    rendelkeznie? A hi/lo játékokban mindkettő kéz nyer, és feleződik a
+    rendelkeznie: A hi/lo játékokban mindkettő kéz nyer, és feleződik a
     nyeremény.
 
 
 A Texas hold'em
 ---------------
 
-A számítógépes pókerben a leggyakrabban vizsgált pókerfajta a Texas hold'em. A
+A számítógépes pókerben a leginkább vizsgált pókerfajta a Texas hold'em. A
 játék e változata nagy népszerűségre tett szert a 2000-es évek elején, a
 televíziónak és az internetnek köszönhetően. Ekkoriban terjedtek el az
 internetes pókertermek is, ahol főleg ezt a változatot játszották.
@@ -271,7 +271,7 @@ Fixed Limit Texas hold'em
 -------------------------
 
 A Texas hold'em általam választott alfajtája a fixed limit Texas hold'em lett.
-Mivel no-limites és a pot-limites változattal ellentétben az emelés összege
+Mivel a no-limites és a pot-limites változattal ellentétben az emelés összege
 mindig ugyanaz, a játékos 4 féle cselekvést végezhet alapvetően:
 
 - Bedobja a lapjait *(fold)*
@@ -290,36 +290,38 @@ Hold'em vs. 5 lapos póker
 
 A fentiek alapján látható, hogy ennél a pókerfajtánál a játékosnak sokkal több
 információ áll rendelkezésére a döntéshez, mint a klasszikus 5 lapos pókernél,
-ahol nincsenek közös lapok, és így nem tudunk következtetni az ellenfél
-esélyeire a miénkkel szemben.
+ahol nincsenek közös lapok, és így sokkal kevésbé tudunk következtetni az
+ellenfél esélyeire a miénkkel szemben.
 
-Ezért a Texas hold'em komplexebb stratégiák alkalmazását engedi meg a másik
-nevezett pókerfajtához képest. Több könyv is íródott, ami a Texas hold'em
-stratégiáit tárgyalja. Ezek könnyen alkalmazható heurisztikákat adnak a
-játékosok kezébe [@sklansky1999theory]. Az emberi játékosok számára készített
+Ezért a Texas hold'em-ben sokkal komplexebb stratégiákat lehet alkalmazni a
+másik nevezett pókerfajtához képest. Több könyv is íródott, ami a Texas hold'em
+stratégiáit tárgyalja. Ezek könnyen alkalmazható heurisztikákkal látják el a
+játékosokat[@sklansky1999theory]. Az emberi játékosok számára készített
 stratégiákat felhasználják szakértői rendszerek készítésénél is, erről majd a
 későbbi fejezetekben lesz szó.
 
 ### Egy példajáték
 
-A stratégiák komplexitását úgy lehet a legjobban szemléltetni, ha megnézünk egy
-konkrét játékbeli döntést egy átlagos emberi játékos szemével:
+A stratégiák komplexitását úgy lehet a legjobban szemléltetni, ha megnézzük egy
+konkrét játékbeli döntés meghozatalát egy átlagos emberi játékos szemével:
 
 Képzeljük el, hogy versenyen ülünk egy asztalnál, középső pozícióban^[A játékos
 asztalnál elfoglalt helyének "jósága". Ez gyakorlatilag azt jelenti, hogy
-hányadik a játékos a körben.], és 10.000 zsetonunk van. Korai pozícióból ránk
-emelnek 600 zsetont. Nemrég ültünk az asztalhoz, és nem ismerjük az ellenfelet,
-de tudjuk, hogy 20.000 zsetonja van. Nálunk $\heartsuit Q, \clubsuit Q$ van.
+hányadik a játékos a körben.], és 10.000 zsetonunk van. Korai pozícióból^[Az
+először cselekvő játékosok egyike.] ránk emelnek 600 zsetont. Nemrég ültünk az
+asztalhoz, és nem ismerjük az ellenfelet, de tudjuk, hogy 20.000 zsetonja van.
+Nálunk $\heartsuit Q, \clubsuit Q$ van.
 
 A korai pozícióból történő emelés sok tartalék zsetonnal majdnem mindig az erős
 lap jele. Meg lehetne adni, de akkor lehet, hogy az utánunk levő játékosok ránk
-emelnének. A $\heartsuit Q, \clubsuit Q$-t egy játékos ellen akarjuk
+emelnének. A $\heartsuit Q, \clubsuit Q$-t pedig egy játékos ellen érdemes
 kijátszani, és jobb a pozíciónk, mint az előttünk levőnek (megfigyelhetjük a
 döntéseit).
 
-Az ellenfél lapjait valamennyire be tudjuk határolni. A kézből párokat nem
-lehet kizárni, mondjuk $88$-tól felfele. Az ász-magaslap is esélyes: talán
-$AQ$, vagy $AK$. Az $AJ$ már kevésbé.
+Az ellenfél lehetséges lapjait valamennyire be tudjuk határolni. A kézből
+pár az egyik lehetőség, körülbelül $88$-tól felfele. Az ász-magaslap is
+esélyes lehet, az $AQ$, vagy $AK$. Az $AJ$ már kevésbé, mert az már gyengébbnek
+számít.
 A vakok 100-200 zsetonosak. Egy nagyobb emelést érdemes tenni, háromszorosát a
 korábbi emelésnek: így elijesztjük a mögöttünk levő játékosokat, és megtudjuk,
 hogy esetleg egy nagyobb pár van-e az előttünk levő emelőnél ($KK$ vagy $AA$).
@@ -334,7 +336,7 @@ A játékoknak általában tisztán definiált szabályaik és céljaik vannak. 
 legtöbb játéknak, ahol a játékos képességei számítanak a szerencsével
 ellentétben, egyszerű a játékmenete, viszont komplex stratégiák kidolgozását
 teszik lehetővé. Eredmények tekintetében ezek miatt könnyű összemérni két
-játékos teljesítményét is, így összehasonlíthatóvá válnak a különböző gépi
+játékos teljesítményét is, ezért összehasonlíthatóvá válnak a különböző gépi
 játékosok.
 
 A póker, mint játék, több mozzanatában különbözik a többi gyakran kutatott
@@ -354,7 +356,7 @@ eseményeket, akkor mondhatjuk, hogy mindegyik játékos csak a saját lapjainak
 leosztásáról értesül.
 
 A pókerben a hiányzó információk szerepe nagyon fontos, ellentétben pl a
-Scrabble-vel, ahol az ellenfél betűit nem ismerjük, viszont a gyakorlatban nem
+Scrabble-lel, ahol az ellenfél betűit nem ismerjük, viszont a gyakorlatban nem
 befolyásolja nagyban a játékosok stratégiáit[@billings1995computer].
 
 
@@ -468,7 +470,7 @@ további közös káró lap, vagy négyes, és nyolcas rontja az esélyeinket.
 
 ### EHS
 
-Az egyszerűség kedvéért jó, ha van egy darab érték, ami kifejezi az erősséget a
+Az egyszerűség kedvéért jó, ha van egy érték, ami kifejezi az erősséget a
 potenciállal együtt. Annak a valószínűségét akarjuk, hogy nálunk lesz a legjobb
 kéz, miután leosztották az utolsó lapot is. Ezt hívjuk _effektív kézerősségnek_
 (effective hand strength, EHS) [@davidson2002opponent, ch. 3.3].
@@ -495,9 +497,8 @@ sok helyzetben felhasználhatják az emberi, illetve a gépi játékosok is.
 
   $$pot\_odds = \frac{megadandó\_zsetonok}{megadandó\_zsetonok + pot}$$
 
-A megadandó zsetonok az adott körben, a játékos előtt történt emelések
-összességét jelenti.
-
+A megadandó zsetonok azt jelenti, hogy a játékosnak mennyi zsetont kell
+megadnia az előtte történt emelések miatt.
 
 Ellenfélmodellezés
 ------------------
@@ -611,7 +612,7 @@ minden egyes ellenfélnek külön súlytábla van tárolva [@billings1998opponen
 #### Súlyok kezdeti értéke
 
 A súlyok kezdeti értékét statisztikai módszerekkel állapítják meg. Minden
-ellenfélnél számon tartják, hogy mekkora arányban foldoltak, adtak meg, illetve
+ellenfélnél számon tartják, hogy mekkora arányban dobtak be, adtak meg, illetve
 emeltek a flop előtt. Ebből származtatnak egy középértéket a kéz erősségére
 nézve ($\mu$, a medián kéz), és egy varianciát ($\sigma$), amiknek a
 mértékegysége $nagyvak / 100 játszott\_kéz$, azaz megegyezik a kezek bevételi
@@ -626,10 +627,12 @@ Példának nézzük, hogy egy ellenfél a kezeinek 30%-ával száll játékba. E
 - a 0-ra állítást, azaz annak feltételezését, hogy egy kezet egyáltalán nem
   játszik az ellenfél, elkerüljük
 
-Az ellenfél releváns, flop előtt végzett cselekvéseit aszerint osztályozzuk,
-hogy a 3 fajta cselekvés mennyibe került (0, 1, vagy 1-nél több), és melyik
-körben hajtotta végre (pre-flop, flop, turn, river). Így 36 kategóriát
-kapunk^[A Loki no-limit játékot is tud játszani ilyen módon].
+Az ellenfél cselekvéseit játék közben aszerint osztályozzuk, hogy a 3 fajta
+cselekvés mennyibe került (0, 1, vagy 1-nél több)^[A Loki no-limit játékot is
+tud játszani ilyen módon], és melyik körben hajtotta végre (pre-flop, flop,
+turn, river). Így 36 kategóriát kapunk. A releváns, flop előtt végzett
+cselekvéseket kiválasztva megkaphatjuk a súlyok kezdeti értékeinek
+kiszámításához szükséges adatokat is.
 
 #### Súlyok állítása
 
@@ -693,7 +696,8 @@ Döntéshozás
 Minden mesterséges pókerjátékosnak, még a legegyszerűbbnek is, a rendelkezésre
 álló információk alapján valamilyen döntések sorozatát kell meghoznia egy játék
 megnyeréséhez. A döntéshozás^[A *Betting strategy* az ennek legjobban megfelelő fogalom
-az angolban.] módja szerint többféle ágenst lehet készíteni.
+az angolban.] módja szerint többféle ágenst lehet készíteni. Konkrét példának
+bemutatom az eddig megismert ágensek mechanizmusait is.
 
 ### Szakértői rendszerek
 
@@ -721,9 +725,10 @@ tartó táblák, így nem is lehetne használni a flop után levő döntési fol
 A Loki a flop után kiszámolja az _EHS_-ét. Az így kapott értéket összeveti egy
 szakértői tudást tartalmazó táblázattal, amiből megkapja, hogy milyen értékek
 esetén kell emelni. Az EHS-t a negatív kézpotenciál figyelembe vétele nélkül
-használja fel, egyrészt az ellenfél elijesztése miatt, viszont amiatt is,
-hogy nem tudjuk, hogy az ellenfelünk játszani fog-e (ez például nem feltétlen
-van így, ha az ellenfélmodellezés ad erre választ)[@billings1998poker].
+használja fel, egyrészt a korábban említett ok miatt, viszont amiatt is, hogy
+az EHS nem ad választ arra, hogy az ellenfelünk játszani fog-e, ha emelünk (ez
+például nem feltétlen van így, ha az ellenfélmodellezés ad erre
+választ)[@billings1998poker].
 
 Például 0.5 fölött már jó eséllyel vagyunk az ellenfeleink előtt, és ezért a
 Loki emelni fog, ha idáig senki sem emelt.
@@ -1215,6 +1220,29 @@ azonnal meg tudjuk mondani, hogy mi lesz számunkra a játék kimenetele, így a
 szimulációt is felesleges elvégezni. Így a fa minimum $1/3$-át nem kell
 kibontanunk.
 
+#### Algoritmus ellenőrzése
+
+Az algoritmus futás közben egy nagy adatstruktúrát generál. A fa helyességéhez
+több tényezőnek kell egyszerre működnie. A döntéshozónak szükség van a játék
+logikájára is, amivel a szimulációkat végezni tudja. Ezen kívül biztosítani
+kellett, hogy a fa csúcsai helyesen adjanak vissza gyerekcsúcsokat, a játék
+állapotát figyelembe véve.
+
+Míg a játék logikáját könnyű volt egységtesztekkel ellenőrizni, itt már ez nem
+tűnt olyan könnyen kivitelezhetőnek. A helyes futás biztosításához a játék
+logikájába asszertálásokat tettem, hogy helytelen művelet (pl. túl sok emelés,
+vagy kör idő előtti befejezése) esetén álljon le. Ez több hibát ki tudott
+szűrni a döntéshozóban.
+
+A felépített játékfa helyességét vizuális módon is tudtam ellenőrizni: a
+tesztjátékok eredményeképpen létrejött fát kirajzoltam. Egy ilyen fa látható a
+@fig:mcts-test ábrán. A csúcsokon látható a soron következő játékos neve, a
+visszaterjesztett érték, a látogatások száma, az előző cselekvés, és a
+jelenlegi kör száma. Ez megkönnyítette a működés hibakeresését, és
+ellenőrzését.
+
+![Az MCTS algoritmus játékfája tesztelés
+közben](figures/mcts.png){width=80% #fig:mcts-test}
 
 #### Optimizáció
 
@@ -1329,7 +1357,9 @@ bedobást, mint amennyit valójában veszíthet vele. Be is állítottam egy ily
 a bedobást választja, a megtett zsetonjainál egyel többet fog
 visszaterjeszteni, mint veszteség.
 
-Ezzel a súlyozással is leültettem játszani az ágenst az 5 fős asztalhoz.
+Ezzel a súlyozással is leültettem játszani az ágenst az 5 fős asztalhoz. Így
+valamivel kevesebb kezet dobott be, és a veszteségeit is csökkentette, 0.16
+nagyvakra játékonként.
 
 
 ### Pokibotok
@@ -1354,17 +1384,20 @@ ellen](figures/pokibots-5max.png){width=65% #fig:pokibots-5max}
 egyszerű struktúrával rendelkező játékosunkon még van mit javítani.
 
 Fő hiányossága az ellenfél kézerősségének jó becslése a szimulációk végén,
-kiértékeléskor. Ez kritikus, ha azt akarjuk, hogy a szimulációk reálisak
-legyenek.
+kiértékeléskor. Ez kritikus lépés, ha azt akarjuk, hogy az MCTS pontos legyen.
+Az ágens játék közben sokszor adott meg olyan emeléseket, amelyekről
+valószínűsíthető volt, hogy alul fog maradni, mivel nem igazította a
+szimulációk kiértékelését a konkrét szituációhoz.
 
-A Monte Carlo fakeresés egy előrelépést jelent a puszta szimulációhoz képest,
-viszont ennél a módszernél is megoldandó marad az a probléma, hogy mit lépjen a
-saját játékosunk a szimuláció közben. Erre szakértői tudás híján az ágens az
-jelenleg valamelyik más játékos ellenfélmodelléből kap választ.
+A Monte Carlo fakeresés egy előrelépést jelent a Poki által használt puszta
+szimulációhoz képest, viszont ennél a módszernél is megoldandó marad az a
+probléma, hogy mit lépjen a saját játékosunk a szimuláció közben. Erre
+szakértői tudás híján az ágens jelenleg valamelyik ellenfélmodellből kap
+választ.
 
-Ami jó tulajdonsága, hogy szakértői információt nagyon kevés helyen használ fel
-(ami célkitűzés szokott lenni hasonló ágensek tervezésénél). A Loki/Poki-val
-ellentétben a flop előtt sem használ fel ilyen tudást a döntéseihez.
+Szakértői információt nagyon kevés helyen használ fel (ami célkitűzés szokott
+lenni hasonló ágensek tervezésénél). A Loki/Poki-val ellentétben a flop előtt
+sem használ fel ilyen tudást a döntéseihez.
 
 A munkám során a korábban önálló laboron nagyrészt általam megtervezett
 architektúrát valósítottam meg. Az implementáció egésze a sajátom, kivéve a
@@ -1379,19 +1412,20 @@ nyílt forrású szoftverként[@GitHuban99:online; @GitHuban91:online].
 Az ágenst számos helyen lehet bővíteni. Elsősorban a kézerősség pontosabb
 becslése segítene a legjobban véleményem szerint.
 
-Az ellenfélmodell másik részén, a cselekvések előrejelzésén is lehetne
+Az ellenfélmodell másik felén, a cselekvések előrejelzésén is lehetne
 pontosítani: jelenleg csak az ellenfél által végzett utolsó cselekvést vesszük
 figyelembe az előrejelzéshez. Szintén nem nézünk túl sok információt a
 leosztott lapokról.
 
-A Monte Carlo fakeresést is lehetne optimizálni, az exploration/exploitation
+A Monte Carlo fakeresést is lehetne optimizálni, a felfedezés/kiaknázás
 szempontok szerint. Lehet, hogy jobb eredményt lehetne elérni pusztán a fa
 építésének, és bejárásának hangolásával.
 
-Ami a számítások sebességét illeti: a jelenlegi módszer alkalmas arra, hogy
+Ami a számítások sebességét illeti: a jelenlegi módszer arra alkalmas, hogy
 bemutassa a rendszer működését, viszont sokkal több iterációt is lehetne
 végezni a MCTS közben. Ettől lehet, hogy javulna az előrejelzések pontossága
 is.
+
 
 Hivatkozások
 ============
