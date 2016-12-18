@@ -1403,7 +1403,7 @@ A munkám során a korábban önálló laboron nagyrészt általam megtervezett
 architektúrát valósítottam meg. Az implementáció egésze a sajátom, kivéve a
 felhasznált szimulációs szoftvert és a nevezett könyvtárakat.
 
-A kész ágens, valamint a Java nyelven íródott kliens megtalálható Githubon,
+A kész ágens, valamint a Java nyelven íródott kliens megtalálható GitHubon,
 nyílt forrású szoftverként[@GitHuban99:online; @GitHuban91:online].
 
 
@@ -1434,6 +1434,108 @@ Szeretném megköszönni Dobrowiecki tanár úrnak a segítőkészségét és az
 munkáját, valamint hogy a lehető legutolsó pillanatban is elvállalta, hogy a
 konzulensem lesz, és kiírta a témát annak ellenére, hogy nem kifejezetten a
 szakterülete.
+
+
+Függelék {-}
+========
+
+
+Ágens használata
+----------------
+
+Az ágens futtatásához néhány programot be kell szereznünk, illetve
+konfigurálnunk kell.
+
+### PokerAcademy 2.5
+
+Ezt a legnehezebb beszerezni, mivel elég régi szoftver, és már nem lehet
+megvásárolni. Fontos, hogy pontosan erre a verzióra lesz szükségünk. Ez a
+legutolsó, ami megjelent. Windows alatt lehet futtatni, de virtuális gépen is
+elfut bármilyen komplikáció nélkül.
+
+
+### MongoDB
+
+Ez egy dokumentumorientált adatbázis. A legegyszerűbb, ha magunknál futtatjuk
+lokálisan. Letölthetjük a weboldalukról: `https://www.mongodb.com/`, vagy ha
+Linuxot használunk, feltelepíthetjük a csomagkezelőnkből, ha tartalmazza.  A
+`mongod --dbpath=/sajat/utvonal` parancsot kiadva el tudjuk indítani, ekkor egy
+üres mappába kreál nekünk egy adatbázist.
+
+Előfordulhat, hogy a mongod nincs benne a rendszer PATH-ában. Ez főleg Windowson
+történhet meg. Ilyenkor hozzá kell adnunk manuálisan. Ezt a vezérlőpultban levő
+környezeti változók dialóguson lehet megtenni.
+
+
+### Ágens szerveroldali kódja
+
+Ezt a GitHubon találjuk meg, a `https://github.com/andrewAsdf/pokerbot` címen.
+Letölthetjük az egészet .zip formátumban, vagy klónozhatjuk, ha van git
+telepítve a gépünkre:
+
+```
+git clone https://github.com/andrewAsdf/pokerbot
+
+```
+
+Az ágens futtatásához Python 3.5-re van szükség. Ha ezzel nem rendelkezünk,
+letölhetjük a Python weboldaláról, vagy Linuxon csomagkezelőből.
+Ezek után a szerveroldal függőségeit kell feltelepítenünk. A Python erre a pip
+csomagkezelőt használja. A függőségek listáját a requirements.txt tartalmazza a
+letöltött (vagy klónozott) mappában:
+
+```
+pip install -r ./requirements.txt
+
+```
+Ha a pip nincs benne a PATH-ban (Windowson), akkor adjuk hozzá ezt is.
+Ha feltelepítettük a függőségeket, elindíthatjuk az ágenst:
+
+```
+export FLASK_APP=pokerbot/server.py
+flask run
+```
+Most futnia kell az ágens szerveroldali részének.  Ha a flask valami okból
+nincs a PATH-ban, akkor hivatkozhatunk rá modulként is:
+
+```
+python -m flask run
+```
+
+Ha virtuális gépet használunk, a Flask-et kívülről is el kell érni, mivel
+alaphelyzetben csak a saját számítógépünkről tehetjük ezt meg. Ehhez használjuk
+a `--host=0.0.0.0` kapcsolót.
+
+
+### Ágens kliensoldali kódja
+
+Ezt a `https://github.com/andrewAsdf/meerkat-webclient` oldalról tölthetjük le.
+A lefordított .jar fájl, és a MeerkatWebclient.pd, ami egy leírófájlként
+szolgál, megtalálhatóak a projekt gyökérmappájában. Ezeket egyenként is le
+tudjuk tölteni.
+
+A két letöltött fájlt másoljuk a PokerAcademy 2.5 mappájában található
+data/bots mappába. Ezután a játékot elindítva megtaláljuk az Opponent Manager
+ablakban, ami a menüből elérhető.
+
+Kreálnunk kell egy játékost a hozzáadott játékmotorral. Az Opponent Manager
+ablakban válasszuk ki a MeerkatWebClientet, és a plusz gombra kattintva
+kreáljunk egy példányt a játékosból, amit már használni tudunk.
+
+A játékost leültetve egy asztalhoz, már tud is játszani, ha fut a szerver. A
+játékost kiválasztva az Opponent Managerben be tudjuk állítani, hogy milyen
+címet próbáljon elérni, ha esetleg máshol fut a szerver. Ez pl. virtuális gép
+esetén jöhet jól, ahol a gazdagép IP-címét kell megadni, a szerver portjával.
+
+Ha betöltünk egy asztalt, az alábbi trükköket használhatjuk az automata futáshoz:
+
+- A menüben kapcsoljuk ki az összes animációt, meg késletetést.
+
+- Az auto deal opciót kapcsoljuk be.
+
+- A saját (emberi) játékosunk zsetonját állítsuk nullára. Ha ezt megcsináljuk,
+  és az auto deal is  aktív, akkor folyamatosan játszani fognak a kiválasztott
+  botok.
 
 
 Hivatkozások
