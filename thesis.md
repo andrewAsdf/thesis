@@ -20,7 +20,7 @@ header-includes:
 <!--
 Feladatkiírás/Címoldal/Tartalomjegyzék/Nyilatkozat
 Bevezetés                               1
-A póker szabályai                       3
+A póker szabályai                       4
 A számítógépes póker összefoglalása     3
 Opponent Modeling                       10
 Ágens megvalósítása
@@ -32,7 +32,7 @@ Featurek a játék állapotáról            (2-3)
 Döntéshozás                             4
 MCTS algoritmus                         (4)
 Eredmények értékelése                   5
-Irokdalom                                1
+Irodalom                                1
 Függelék
 -->
 
@@ -80,13 +80,13 @@ a megadott forrásokat (szakirodalom, eszközök stb.) használtam fel. Minden
 olyan részt, melyet szó szerint, vagy azonos értelemben, de átfogalmazva más
 forrásból átvettem, egyértelmûen, a forrás megadásával megjelöltem.
 
-Hozzájárulok, hogy a jelen munkám alapadatait (szerzõ(k), cím, angol és magyar
+Hozzájárulok, hogy a jelen munkám alapadatait (szerző(k), cím, angol és magyar
 nyelvû tartalmi kivonat, készítés éve, konzulens(ek) neve) a BME VIK
-nyilvánosan hozzáférhetõ elektronikus formában, a munka teljes szövegét pedig
-az egyetem belsõ hálózatán keresztül (vagy autentikált felhasználók számára)
+nyilvánosan hozzáférhető elektronikus formában, a munka teljes szövegét pedig
+az egyetem belső hálózatán keresztül (vagy autentikált felhasználók számára)
 közzétegye. Kijelentem, hogy a benyújtott munka és annak elektronikus verziója
 megegyezik. Dékáni engedéllyel titkosított diplomatervek esetén a dolgozat
-szövege csak 3 év eltelte után válik hozzáférhetõvé.
+szövege csak 3 év eltelte után válik hozzáférhetővé.
 
 \begin{flushleft}
 \vspace*{1cm}
@@ -134,11 +134,11 @@ of it's properties, it is used as a testbed for creating new algorithms in a
 controlled environment.
 
 During my work I researched existing papers about computer poker, then I
-applied it by designing my own computer poker player. My bot uses a machine
-learning based opponent modelling method, and a simulation based method for
+applied them to designing my own computer poker player. My bot uses a machine
+learning based opponent modelling method and a simulation based method for
 making decisions.
 
-I benchmarked the finished bot with other, existing bots in the PokerAcademy
+I benchmarked the finished bot with other existing bots in the PokerAcademy
 simulator program.
 
 
@@ -146,20 +146,19 @@ Bevezetés
 =========
 
 <!-- 1 oldal -->
-Azért választottam ezt a témát, mert régebben hobbiszinten én is pókereztem
-internetes pókertermekben, így felkeltette az érdeklődésemet, hogy ezt a
-játékot számítógép is végezheti, ráadásul sokszor hatékonyabban, mint profi
-emberi játékosok.
-Annak ellenére, hogy a témakörben már rengeteg kutatást végeztek, egy
-pókerágens tervezése és fejlesztése még mindig egy összetett feladat, rengeteg
-megoldandó problémával.
+Régebben hobbiszinten én is pókereztem internetes pókertermekben, így
+felkeltette az érdeklődésemet, hogy ezt a játékot számítógép is játszhatja,
+ráadásul sokszor hatékonyabban, mint profi emberi játékosok. Annak ellenére,
+hogy a témakörben már rengeteg kutatást végeztek, egy pókerágens tervezése és
+fejlesztése még mindig egy összetett feladat, rengeteg megoldandó problémával.
 
 A terület egyik legnagyobb művelője a kanadai University of Albertán működő
-Computer Poker Research Group (CRPG), akik már a kilencvenes évek közepétől
-foglalkoznak a témával, és rengeteg eredményt publikáltak. A kutatáson
-kívül versenyeket is szerveznek, ahol számítógépes pókerágensek mérhetik össze
-tudásukat: a leghíresebb az Annual Computer Poker Competition, amelyet 2006-ban
-tartottak először, és évente szervezik, különböző kategóriákban.
+Computer Poker Research Group (CRPG)[@CPRGHome97:online], akik már a
+kilencvenes évek közepétől foglalkoznak a témával, és rengeteg eredményt
+publikáltak. A kutatáson kívül versenyeket is szerveznek, ahol számítógépes
+pókerágensek mérhetik össze tudásukat: a leghíresebb az Annual Computer Poker
+Competition[@Home44:online], amelyet 2006-ban tartottak először, és évente
+szervezik, különböző kategóriákban.
 
 Az évek során számos ágenst fejlesztettek ki. A kezdeti próbálkozásokhoz képest
 mára ott tartunk, hogy a CRPG "megoldotta" az általam is választott
@@ -167,7 +166,7 @@ pókerfajtát, azaz a legújabb játékosuk már gyakorlatilag tökéletesen já
 [@CepheusP8:online]. Az általuk készített ágensek forrása nem nyílt, viszont
 vázlatos képet kaphatunk a működésükről.
 
-A saját munkám során a vizsgált pókerfajta, és a tesztkörnyezet kiválasztása
+A saját munkám során a vizsgált pókerfajta és a tesztkörnyezet kiválasztása
 után olyan megoldásra törekedtem, ami felhasználja a gépi tanulást valamilyen
 formában, valamint elég egyszerű ahhoz, hogy a félév során működőképes ágens
 legyen az eredmény. Ennek megfelelően a korábban önálló labormunka keretében
@@ -187,8 +186,9 @@ Ezek után a saját ágensem architektúráját fogom ismertetni, a rendszerterv
 kívül a megvalósítás részleteivel együtt, kitérve az ellenfélmodellezésre és a
 döntéshozásra is.
 
-Végül bemutatom, és értékelem az eredményeket, és megvizsgálom hogy milyen
+Végül bemutatom, és értékelem az eredményeket, és megvizsgálom, hogy milyen
 lehetőségek vannak a további fejlesztésekre.
+
 
 A pókerjáték
 ============
@@ -196,17 +196,28 @@ A pókerjáték
 A pókernek számos fajtája létezik[@PokerWik95:online]. Ezek elég különbözőek
 lehetnek, de a közös vonás mindegyikben, hogy a játékosok egy kör során
 valahány saját lapot kapnak, és a licitkör(ök) után a legjobb lapkombinációval
-(kézzel) rendelkező játékos viszi el a tétet. A kezek a játékosok saját
-lapjaiból, illetve a leosztott közös lapokból állhatnak, ha van olyan.
+(kézzel) rendelkező játékos viszi el a tétet.
 
-A játékfajták több mindenben különbözhetnek, a teljesség igénye nélkül:
+A kezek a játékosok saját, privát lapjaiból, illetve a leosztott, mindenki
+által látható közös lapokból állhatnak. A játékfajták több mindenben
+különbözhetnek, a teljesség igénye nélkül:
 
-  - Licitkörök száma
-  - Licitek határa
+  - Licitkörök száma: ezekből több is lehet. Közöttük általában a játékosok
+    lapokat cserélnek, vagy közös lapokat oszt le az osztó.
+
+  - Licitek határa: bizonyos játékokban meg van szabva az emelés maximuma. A
+    *fix limit*es játékokban az emelés fix összeg lehet csak.
+
   - Játékosok saját lapjainak száma, illetve a mindenki által látható közös
-    lapok száma
-  - Lapok cseréjének lehetősége, ezek száma
-  - Legjobb vagy legrosszabb kéz nyer-e, vagy mindkettő
+    lapok száma: vannak játékfajták, ahol nincsenek egyáltalán közös lapok.
+    Valahol a játékosok lapjainak egy része látható az ellenfelek számára.
+
+  - Lapok cseréjének lehetősége, a cserék száma: nem mindegyik fajtában lehet a
+    privát lapokat kicserélni, valamelyikben viszont többször is.
+
+  - A győztes játékosnak a legjobb, vagy a legrosszabb kézzel kell
+    rendelkeznie? A hi/lo játékokban mindkettő kéz nyer, és feleződik a
+    nyeremény.
 
 
 A Texas hold'em
@@ -217,43 +228,51 @@ játék e változata nagy népszerűségre tett szert a 2000-es évek elején, a
 televíziónak és az internetnek köszönhetően. Ekkoriban terjedtek el az
 internetes pókertermek is, ahol főleg ezt a változatot játszották.
 
-A hagyományos 5 lapos pókerhez képest a játék elején minden játékos 2 saját
-lapot kap. Az osztó *(button)* utáni játékos *(kisvak/small blind)* az alaptét
-felét teszi meg, és az utána következő játékos *(nagyvak/big blind)* az alaptétet
-teszi meg kötelezően, így ösztönözve a további liciteket.
+A hagyományos 5 lapos pókerhez képest a játék elején minden játékos 2 saját,
+privát lapot kap. Az osztó *(button)* utáni játékos *(kisvak/small blind)* az
+alaptét felét teszi meg, és az utána következő játékos *(nagyvak/big blind)* az
+alaptétet teszi meg kötelezően, így ösztönözve a további liciteket.
 
-A Texas hold'em alfajai különbözhetnek a licitekre vonatkozó megkötésekben. A
+A Texas hold'em alfajai különböznek a licitekre vonatkozó megkötésekben. A
 legnépszerűbb fajta, amit emberi játékosok játszanak, az a *no-limit*, azaz
 limit nélküli hold'em, ahol a tét minimuma van csak megszabva, ami az adott
 nagyvak, maximuma pedig a játékos összes zsetonja. További fajták még a *pot
 limit* és a *fixed limit* hold'em. Az előbbinél a tét maximuma a jelenlegi
-tétek összessége, a *pot* lehet, míg az utóbbinál a tét egy fix összeg,
-pontosan egyenlő a nagyvakkal (ami a nevezéktant illeti; a játékosokat és a
+tétek összessége, a *pot* lehet, míg az utóbbinál a tét egy fix összeg.
+Ez megegyezik a nagyvakkal (ami a nevezéktant illeti; a játékosokat és a
 téteket is vakoknak hívják).
 
-Az első licitkör után leosztásra kerülnek a közös lapok. Ezt *flop* nak hívják,
-és 3 közös lapot jelent. Az újabb licitelés után rendre leosztásra kerülnek a
-*turn* és *river* lapok, ezek 1-1 lapot jelentenek körönként.
-Az utolsó licitkör után a játékosok kezei a leosztott lapokból és a saját,
-privát lapjaikból állnak. Az így rendelkezésre álló 7 lapból alkotott legjobb 5
-lapos kombináció fog számítani. A lapok mutatását hívják _showdownnak_.
+Az első licitkör után az osztó leosztja a közös lapok egy részét. Ezt *flop*
+nak hívják, és 3 közös lapot jelent. Az újabb licitelés után rendre leosztásra
+kerülnek a *turn* és *river* lapok, ezek 1-1 lapot jelentenek körönként.
+
+Az utolsó licitkör után a bent maradó játékosok terítik a privát lapjaikat.
+A játékosok kezei a leosztott lapokból és a saját, privát lapjaikból állnak. Az
+így rendelkezésre álló 7 lapból alkotott legjobb 5 lapos kombináció fog
+számítani. A lapok mutatását _showdownnak_ hívják.
 
 A játékot játszhatják *cash game* vagy verseny formában. Az előbbinél a játékos
 célja az asztalhoz leülve minél több zsetont megszerezni valahány kör során. A
-játékos szabadon hozhat további zsetonokat az asztalhoz. A versenyek során viszont
-a versenyző játékosok fix mennyiségű zsetont kapnak, és kieséssel távoznak az
-asztaltól.
+játékos szabadon hozhat további zsetonokat az asztalhoz, és bármelyik kör után
+szabadon távozhat a nyereményével.
+
+A versenyek során viszont a versenyző játékosok fix mennyiségű zsetont kapnak,
+és kieséssel távoznak az asztaltól. Az első néhány helyezés megegyezés szerint
+részesül a nyereményből.
 
 Én cash game-t használtam az ágens tesztkörnyezetének, és a munka során
 feltettem továbbá, hogy minden játékosnak végtelen sok zsetonja van. Így egy
-lejátszott játék eredménye közvetlenül mérhető volt.
+lejátszott játék eredménye közvetlenül mérhető volt, és nem kellett a stratégia
+kidolgozása során figyelembe venni a zsetonok mennyiségét, ami pélául egy
+verseny során fontos tényező.
 
-Limites Texas hold'em
----------------------
 
-Az általam választott játék a limites Texas hold'em lett. Mivel no-limites és a
-pot-limites változattal ellentétben az emelés összege mindig ugyanaz, ha
-sorrakerül egy játékos, 4 féle cselekvést végezhet alapvetően:
+Fixed Limit Texas hold'em
+-------------------------
+
+A Texas hold'em általam választott alfajtája a fixed limit Texas hold'em lett.
+Mivel no-limites és a pot-limites változattal ellentétben az emelés összege
+mindig ugyanaz, a játékos 4 féle cselekvést végezhet alapvetően:
 
 - Bedobja a lapjait *(fold)*
 - Jelzi, hogy nem szeretne emelni, de nem kell tétet megadnia: *check*el
@@ -262,6 +281,8 @@ sorrakerül egy játékos, 4 féle cselekvést végezhet alapvetően:
 
 A többi fajtában az emelés összegét variálhatja a játékos. Ez megnehezíti az
 ágensek készítését a játékhoz, mivel a lehetséges lépések száma sokkal nagyobb.
+Általában vödrökbe szokták kategorizálni az emelések mennyiségét, és az egy
+kategóriába tartozóakat egy fajtának veszik [@gilpin2008heads].
 
 
 Hold'em vs. 5 lapos póker
@@ -270,19 +291,46 @@ Hold'em vs. 5 lapos póker
 A fentiek alapján látható, hogy ennél a pókerfajtánál a játékosnak sokkal több
 információ áll rendelkezésére a döntéshez, mint a klasszikus 5 lapos pókernél,
 ahol nincsenek közös lapok, és így nem tudunk következtetni az ellenfél
-esélyeire a miénkkel szemben. Ezért a Texas hold'em komplexebb stratégiák
-alkalmazását engedi meg a másik nevezett pókerfajtához képest. Több könyv is
-íródott, ami a Texas hold'em stratégiáit tárgyalja. Ezek könnyen alkalmazható
-heurisztikákat adnak a játékosok kezébe [@sklansky1999theory]. Az
-emberi játékosok számára készített stratégiákat felhasználják szakértői
-rendszerek készítésénél is, erről majd a későbbi fejezetekben lesz szó.
+esélyeire a miénkkel szemben.
+
+Ezért a Texas hold'em komplexebb stratégiák alkalmazását engedi meg a másik
+nevezett pókerfajtához képest. Több könyv is íródott, ami a Texas hold'em
+stratégiáit tárgyalja. Ezek könnyen alkalmazható heurisztikákat adnak a
+játékosok kezébe [@sklansky1999theory]. Az emberi játékosok számára készített
+stratégiákat felhasználják szakértői rendszerek készítésénél is, erről majd a
+későbbi fejezetekben lesz szó.
+
+### Egy példajáték
+
+A stratégiák komplexitását úgy lehet a legjobban szemléltetni, ha megnézünk egy
+konkrét játékbeli döntést egy átlagos emberi játékos szemével:
+
+Képzeljük el, hogy versenyen ülünk egy asztalnál, középső pozícióban^[A játékos
+asztalnál elfoglalt helyének "jósága". Ez gyakorlatilag azt jelenti, hogy
+hányadik a játékos a körben.], és 10.000 zsetonunk van. Korai pozícióból ránk
+emelnek 600 zsetont. Nemrég ültünk az asztalhoz, és nem ismerjük az ellenfelet,
+de tudjuk, hogy 20.000 zsetonja van. Nálunk $\heartsuit Q, \clubsuit Q$ van.
+
+A korai pozícióból történő emelés sok tartalék zsetonnal majdnem mindig az erős
+lap jele. Meg lehetne adni, de akkor lehet, hogy az utánunk levő játékosok ránk
+emelnének. A $\heartsuit Q, \clubsuit Q$-t egy játékos ellen akarjuk
+kijátszani, és jobb a pozíciónk, mint az előttünk levőnek (megfigyelhetjük a
+döntéseit).
+
+Az ellenfél lapjait valamennyire be tudjuk határolni. A kézből párokat nem
+lehet kizárni, mondjuk $88$-tól felfele. Az ász-magaslap is esélyes: talán
+$AQ$, vagy $AK$. Az $AJ$ már kevésbé.
+A vakok 100-200 zsetonosak. Egy nagyobb emelést érdemes tenni, háromszorosát a
+korábbi emelésnek: így elijesztjük a mögöttünk levő játékosokat, és megtudjuk,
+hogy esetleg egy nagyobb pár van-e az előttünk levő emelőnél ($KK$ vagy $AA$).
+
+
 
 A póker, mint kutatási terület
 ------------------------------
-<!-- TODO: szövegezni-->
 <!-- TODO: póker vs. sakk stb?-->
 
-A játékoknak általában tisztán definiált szabályaik, és céljaik vannak. A
+A játékoknak általában tisztán definiált szabályaik és céljaik vannak. A
 legtöbb játéknak, ahol a játékos képességei számítanak a szerencsével
 ellentétben, egyszerű a játékmenete, viszont komplex stratégiák kidolgozását
 teszik lehetővé. Eredmények tekintetében ezek miatt könnyű összemérni két
@@ -343,21 +391,21 @@ tulajdonságokkal kell rendelkeznie a sikeres játék érdekében [@davidson2002
 
 * Ellenfélmodellezés: Meg kell értenünk, hogy hogyan játszik egy ellenfél, hogy
   kihasználjuk a gyengeségeit, és védekezni is tudjunk ellene. Ehhez tudnunk
-  kell értelmezni a cselekvéseit, hogy következtethessünk a kézerősségére, és a
+  kell értelmezni a cselekvéseit, hogy következtethessünk a kézerősségére és a
   további cselekvéseire. A kézerősség becslése nagyban függ attól, hogy hogyan
   tudjuk az ellenfél lapjainak eloszlását megbecsülni, azaz hogy milyen
   lapokkal hajlamos játszani.
 
 Ezek a tulajdonságok iránymutatóként szolgálnak egy pókerágens tervezésénél.
 Azt viszont már nekünk kell eldöntenünk, hogy ezeket az információkat pontosan
-hogyan állítjuk elő, és használjuk fel. Nem is biztos, hogy egy ágens
+hogyan állítjuk elő és használjuk fel. Nem is biztos, hogy egy ágens
 működése során explicit módon megjelennek ezek a fogalmak, viszont mindeképp
 számolni kell velük.
 
 Kéz értékelése
 --------------
 
-A kezek értékeléséhez több heurisztika, és egyszerűsítés is rendelkezésünkre
+A kezek értékeléséhez több heurisztika és egyszerűsítés is rendelkezésünkre
 áll [@billings1998poker]. Ezeknek még a későbbi ágensek bemutatása során is
 szerepük lesz.
 
@@ -382,16 +430,18 @@ nyert a legtöbbször, és a kettes-hetes _offsuit_ lett a legrosszabb.
 
 A kezekhez csoportonként hozzárendeltek továbbá egy _bevételi rátát_, aminek a
 mértékegysége a pókerben egyébként is használatos $nagyvak/100\_játszott\_kéz$.
-Ennek a továbbiakban lesz jelentősége. Ez azt jelenti, hogy az adott kéz a
-kísérletek során mekkora bevételt ért el átlagosan.
+Ennek a továbbiakban lesz jelentősége. A bevételi ráta jelenti, hogy az adott
+kéz a kísérletek során mekkora bevételt ért el átlagosan. Például 2 nagyvak per
+100 játszott kéz azt jelenti, hogy 100 játék alatt 200 nagyvaknyi nyereségre
+tettünk szert.
 
 ### Kézerősség
 
 Ez egy metrika, amit a flop után lehet alkalmazni, hogy megbecsüljük a kezünk
 erősségét a többi játékoshoz képest[@billings1998opponent]. Ellenfélmodellezés
-nélkül egyszerűen megszámoljuk a nálunk jobb, rosszabb, és ugyanolyan kezeket.
+nélkül egyszerűen megszámoljuk a nálunk jobb, rosszabb és ugyanolyan kezeket.
 Flop esetén pl $\binom{47}{2} = 1081$ lehetséges kéz lehet egy ellenfélnél^[A
-nálunk levő kettőt, és a 3 db. leosztott lapot ismerjük: 52 - 5 db. lap
+nálunk levő kettőt és a 3 db. leosztott lapot ismerjük: 52 - 5 db. lap
 ismeretlen].
 Több ellenfél esetén egyszerűen hatványozzuk a kapott értéket az ellenfelek
 számával.
@@ -426,7 +476,7 @@ kéz, miután leosztották az utolsó lapot is. Ezt hívjuk _effektív kézerős
 $$ EHS = HS * (1 - NPot) + (1 - HS) * PPot $$
 
 A képletben levő $HS$ a kézerősségnek felel meg, az $NPot$ és a $PPot$ pedig
-rendre a pozitív, és negatív potenciált jelenti. A gyakorlatban viszont
+rendre a pozitív és negatív potenciált jelenti. A gyakorlatban viszont
 kiveszik a negatív potenciált, és az alábbi képletet használják:
 
 $$ EHS = HS + (1 - HS) * PPot $$
@@ -449,13 +499,11 @@ A megadandó zsetonok az adott körben, a játékos előtt történt emelések
 összességét jelenti.
 
 
-Opponent Modelling
+Ellenfélmodellezés
 ------------------
 
-<!-- 10 oldal, todo kifejteni -->
-
 Ahogy korábban elhangzott, az ellenfélmodellezés két fő célja az ellenfél
-cselekvéseinek, és kézerősségének megbecslése.
+cselekvéseinek és kézerősségének megbecslése.
 
 Az ellenfélmodellezést megnehezítő tényezők [@davidson2002opponent, ch. 4]:
 
@@ -476,10 +524,10 @@ Az ellenfélmodellezést megnehezítő tényezők [@davidson2002opponent, ch. 4]
   Az ellenfél modellezése közben viszont bármilyen korreláció kiszűrése előnyös
   lehet.
 
-- Lassú alkalmazkodás: Az emberi játékosok megérzés alapján, és tapasztalat alapján
+- Lassú alkalmazkodás: Az emberi játékosok megérzés és tapasztalat alapján
   gyorsan ki tudják találni az ellenfeleik játékát. Még a saját játékukat is
   megváltoztathatják, hogy verifikáljanak egy-egy ilyen elméletet. Ezzel
-  szemben a gépi tanuló módszereknek sok megfigyelésre van szülségük, és
+  szemben a gépi tanuló módszereknek sok megfigyelésre van szükségük, és
   lassabban alkalmazkodnak.
 
 - A modellezés több szintje: Az ellenfél modellezése nem csak a közvetlen döntéseire
@@ -525,7 +573,8 @@ Az alapegysége a perceptron, ami az emberi idegsejthez hasonlóan súlyozva
 összegzi a bemeneteit, és ezt egy előjelfüggvény, vagy egy szigmoid függvény
 bemeneteként használja fel. Az így képzett struktúra a bemenetek lineáris
 szeparálására alkalmas. Nemlineáris szeparálás is megoldható több réteg
-perceptron összekötésével, ahol egy réteg bemenete az előző réteg kimenete.
+perceptron összekötésével, ahol egy réteg bemenete az előző réteg
+kimenete[@altrichter2006neuralis].
 
 Egy konkrét példáról a Poki-ról szóló részben lesz szó.
 
@@ -535,10 +584,10 @@ Egy konkrét példáról a Poki-ról szóló részben lesz szó.
 Különböző ágensek ellenfélmodellezése
 -------------------------------------
 
-A Loki és utódja, Poki a CRPG által fejlesztett játékos. Ezek az ágensek azok,
-amelyek viszonylag összetettebbek, és valamennyire dokumentálva van a
-működésük. Minden részletre nem térnek ki a tanulmányok, de a működésük
-alapelve megismerhető.
+A Loki és utódja, Poki a CRPG által fejlesztett
+játékos[@billings2002challenge]. Ezek az ágensek azok, amelyek viszonylag
+összetettebbek, és valamennyire dokumentálva van a működésük. Minden részletre
+nem térnek ki a tanulmányok, de a működésük alapelve megismerhető.
 
 A Poki megtalálható a PokerAcademy-ben is, mint ellenfél.
 
@@ -564,16 +613,16 @@ minden egyes ellenfélnek külön súlytábla van tárolva [@billings1998opponen
 A súlyok kezdeti értékét statisztikai módszerekkel állapítják meg. Minden
 ellenfélnél számon tartják, hogy mekkora arányban foldoltak, adtak meg, illetve
 emeltek a flop előtt. Ebből származtatnak egy középértéket a kéz erősségére
-nézve, ($\mu$, a medián kéz), és egy varianciát ($\sigma$), amiknek a
+nézve ($\mu$, a medián kéz), és egy varianciát ($\sigma$), amiknek a
 mértékegysége $nagyvak / 100 játszott\_kéz$, azaz megegyezik a kezek bevételi
 rátájával.
 
-Például egy ellenfél a kezeinek 30%-át adja meg. Ez egy +200-as medián kéznek
-felel meg. Ha a varianciát 100-nak vesszük, akkor:
+Példának nézzük, hogy egy ellenfél a kezeinek 30%-ával száll játékba. Ez egy
++200-as medián kéznek felel meg. Ha a varianciát 100-nak vesszük, akkor:
 
 - a +300 feletti bevételi rátával rendelkező kezek súlyát 1-re állítjuk
 - a +100 alatti bevételi rátával rendelkező kezek súlyát 0.01-re állítjuk
-- a kettő érték között levő kezek súlyát arányosan állítjuk
+- a kettő érték között levő kezek súlyát arányosan állítjuk 0.01 és 1 között
 - a 0-ra állítást, azaz annak feltételezését, hogy egy kezet egyáltalán nem
   játszik az ellenfél, elkerüljük
 
@@ -604,31 +653,31 @@ használata. [@davidson2002opponent, chapter 4], A konkrét háló egy előrecsa
 neurális háló, 1 rejtett réteggel.
 
 
-\# | Típus | Leírás
--- | ----- | -----------------------------------------
-0  | valós | pot odds
-1  | valós | tétek aránya $tétek /(tétek + megadások)$
-2  | bool  | a játékos befektetett zsetont
-3  | bool  | egy tétet kell megadni
-4  | bool  | kettő, vagy több tétet kell megadni
-5  | bool  | turn van éppen
-6  | bool  | river van éppen
-7  | bool  | a játékos megadott téteket
-8  | bool  | a játékos utoljára emelt
-9  | valós | játékosok száma * 0.1
-10 | bool  | 2 aktív játékos van
-11 | bool  | játékos jön először
-12 | bool  | játékos jön utoljára
-13 | valós | kézerősség az adott ellenfélre
-14 | valós | kézpotenciál az adott ellenfélre
-15 | bool  | szakértői rendszer szerint megadna
-16 | bool  | szakértői rendszer szerint emelne
-17 | bool  | Poki jön éppen
+Típus    Leírás
+-----    -----------------------------------------
+valós    pot odds
+valós    tétek aránya $tétek /(tétek + megadások)$
+boolean  a játékos befektetett zsetont
+boolean  egy tétet kell megadni
+boolean  kettő, vagy több tétet kell megadni
+boolean  turn van éppen
+boolean  river van éppen
+boolean  a játékos megadott téteket
+boolean  a játékos utoljára emelt
+valós    játékosok száma * 0.1
+boolean  2 aktív játékos van
+boolean  játékos jön először
+boolean  játékos jön utoljára
+valós    kézerősség az adott ellenfélre
+valós    kézpotenciál az adott ellenfélre
+boolean  szakértői rendszer szerint megadna
+boolean  szakértői rendszer szerint emelne
+boolean  Poki jön éppen
 
 Table: A Poki által használt bemenetek
 
 A bemenetek a játék nyilvános állapotából kerülnek ki, amit mindegyik játékos
-észlel. Látható, hogy a bool típusú bemenetek közül egymást kizáróak is vannak.
+észlel. Látható, hogy a boolean típusú bemenetek közül egymást kizáróak is vannak.
 A szakértői rendszer alatt a Loki által is használt képlet-alapú döntéshozást
 kell érteni, aminek a bemutatása később következik.
 
@@ -680,12 +729,12 @@ Például 0.5 fölött már jó eséllyel vagyunk az ellenfeleink előtt, és ez
 Loki emelni fog, ha idáig senki sem emelt.
 
 A Lokinak azon kívül, hogy eldöntse, hogy mikor kell emelnie, azt is el kell
-döntenie, hogy mikor éri meg megadnia. Ezt a pot odds, és a pozitív
+döntenie, hogy mikor éri meg megadnia. Ezt a pot odds és a pozitív
 kézpotenciál számításával teszi meg. Ha $PPot > pot\_odds$, akkor ad meg egy
 emelést.
 
 A pozitív potenciál számításához egy kártya leosztását nézi meg előre. Ha a
-turn, és a river közös lapját is figyelembe venné, akkor meg kéne vizsgálni azt
+turn és a river közös lapját is figyelembe venné, akkor meg kéne vizsgálni azt
 is, hogy vajon emelnek-e az első lap után.
 
 ### Poki
@@ -715,11 +764,11 @@ kiértékelőfüggvényt biztosítani, és a játékfa mérete általában nagyo
 hogy az egészet bejárjuk.
 
 Ezekre a problémákra nyújtanak megoldást a szimuláció alapú megközelítések,
-ahol a játékfa szélessége bejárása helyett néhány, irányított mélységi keresést
+ahol a játékfa szélességi bejárása helyett néhány, irányított mélységi keresést
 végzünk, azaz gyakorlatilag konkrét végigjátszásokat (_rollout_) csinálunk
 egymás után (@fig:treesearch ábra).
 
-![Különbség a klasszikus fakeresés, és a szimuláció
+![Különbség a klasszikus fakeresés és a szimuláció
 között.](figures/treesearch.png){width=50% #fig:treesearch}
 
 Amikor a Pokinak egy döntésre van szüksége, és szimulációt használ, akkor
@@ -748,7 +797,7 @@ kiválválasztásra.
 
 <!-- 4 oldal -->
 Az ágens megvalósításához figyelembe vettem a korábbi önálló laboron készült
-terveket. A keretrendszer, és az architektúra egyes elemei onnan származnak.
+terveket. A keretrendszer és az architektúra egyes elemei onnan származnak.
 
 A felhasznált keretrendszer
 ---------------------------
@@ -778,7 +827,7 @@ szeretnénk fordítani, mivel mindig be kell csomagolni `.jar` formába az ágen
 A fejlesztést könnyítendő, készítettem egy dummy ágenst, ami egyfajta
 kliensként funkcionál egy tetszőlegesen megírt szerverhez, ami a tényleges logikát
 tartalmazza. A dummy ágenst a játék által használt teljes Java runtime miatt
-könnyen meg lehetett valósítani. Az elkészült kliens http-n keresztül küld, és
+könnyen meg lehetett valósítani. Az elkészült kliens http-n keresztül küld és
 fogad XML üzeneteket, egy egyszerű API szerint[@GitHuban99:online]. Az ágenst
 már erre alapozva fejlesztettem.
 
@@ -801,16 +850,16 @@ dokumentálva, vagy tesztelve.
 
 Az ágens egyszerű felépítéssel rendelkezik. A döntéshozás, azaz adott
 pillanatban valamilyen cselekvés kiválasztása a Monte Carlo tree search
-algoritmussal történik. Ez a Pokiéhoz hasonlóan egy szimuláción alapuló
-módszer.
+algoritmussal[@MonteCar27:online] történik. Ez a Pokiéhoz hasonlóan egy
+szimuláción alapuló módszer, és a későbbiekben lesz róla szó külön is.
 
 A szimuláció közben az ellenfél helyett itt is az ellenfélmodellező cselekszik,
 ehhez a Poki-hoz hasonló neurális hálóval működő megoldást készítettem.
 
 Az ágens külön fut szerverként, és Pythonban íródott, a Flask keretrendszer
 segítségével. Előnye, hogy nagyon kevés munkával tudunk indítani webes
-szolgáltatásokat. A Python használatának a gyors fejlesztés, és tesztelés volt
-az előnye, valamint a modulok nagy választéka a numerikus számításokhoz, és a gépi
+szolgáltatásokat. A Python használatának a gyors fejlesztés és tesztelés volt
+az előnye, valamint a modulok nagy választéka a numerikus számításokhoz és a gépi
 tanuláshoz.
 
 Főleg az apróbb módosítások voltak így könnyűek a már futó ágensen: elég volt
@@ -860,13 +909,14 @@ alapnak. Az általam kiválasztott bemeneteket, amik a játék állapotáról k�
 jellegfüggvények (_featurek_), egy előrecsatolt neurális háló kapja meg, és az
 elvárt kimenet vagy a legvalószínűbb cselekvés, vagy egy valószínűségi hármas,
 ami tartalmazza a bedobás, megadás, emelés valószínűségeit (a Poki-hoz
-hasonlóan én is egynek vettem a megadást, és a check-et).
+hasonlóan én is egynek vettem a megadást és a check-et).
 
 A szimuláció végrehajtásához természetesen szükség van a játékosok
 kézskálájának becslésére. Itt egy egyszerű megoldást választottam. Kiszámoltam
-a játékosok VPIP-jét, ami egy mérőszám: megmondja, hogy az adott játékos az
-összes játék közül hányban vett részt aktívan, azaz fektetett be pénzt az első
-körben. Ehhez az kell, hogy megadja a nagyvakot, vagy ráemeljen.
+a játékosok VPIP-jét^[Voluntarily Put $ In Pot], ami egy mérőszám: megmondja,
+hogy az adott játékos az összes játék közül hányban vett részt aktívan, azaz
+fektetett be pénzt az első körben. Ehhez az kell, hogy megadja a nagyvakot,
+vagy ráemeljen.
 
 Ezt az értéket felhasználtam a tényleges skála megállapítása során, mégpedig
 úgy, hogy a 169 féle kezdőkézhez letöltöttem egy rangsort, ami érték szerint
@@ -881,7 +931,7 @@ ellenfélmodellező lekéri a játékokat, és a játékokat feldolgozza az alá
 módon:
 
 - Minden egyes játékot újrajátszik a tárolt cselekvések alapján.
-- Az újrajátszott játék minden pillanatában a jellegfüggvényeket kiszámolom, és
+- Az újrajátszott játék minden pillanatában a jellegfüggvényeket kiszámolom és
   eltárolom, az éppen következő játékos cselekvésével együtt. Az így kapott
   jellegfüggvény-vektor, és a következő cselekvés egy darab tanítópontot fog
   alkotni az adott játékosnak.
@@ -894,12 +944,12 @@ Ez a módszer elfogadható sebességű játékot eredményez, ha a tanítást mo
 minden 100. játékonként végzem csak. Így mondhatjuk, hogy a tanulás online
 módon működik, azaz az ágens futás közben alkalmazkodik az ellenfelekhez.
 
-A tanítást a scikit-learn Python modullal végzem. Ez az egyik legnépszerűbb
-Python csomag a gépi tanulásra. A Matlabhoz hasonlóan egyszerű használni.
-Támogatja MLP-k létrehozását több osztályos osztályozáshoz, valamint egy darab
-válasz helyett valószínűségi eloszlások visszaadását is. Ekkor a bemenetekre
-visszaadott válasz egy vektor lesz, akkora hosszúsággal, mint az osztályok
-száma, azaz az én esetemben 3.
+A tanítást a scikit-learn[@scikitle63:online] Python modullal végzem. Ez az
+egyik legnépszerűbb Python csomag a gépi tanulásra. A Matlabhoz hasonlóan
+egyszerű használni.  Támogatja MLP-k létrehozását több osztályos
+osztályozáshoz, valamint egy darab válasz helyett valószínűségi eloszlások
+visszaadását is. Ekkor a bemenetekre visszaadott válasz egy vektor lesz, akkora
+hosszúsággal, mint az osztályok száma, azaz az én esetemben 3.
 
 A modelleket jelenleg játékosszinten tárolom, viszont hatékonyabb megoldás
 lenne, ha pl. asztal/játékos bontásban készülne egy-egy modell. Így a rendszer
@@ -919,29 +969,28 @@ szimuláció közben sokszor kerülnek kiszámításra.
 A választott jellegfüggvények a következők:
 
 ---------------------------------------------
-Típus Leírás
------ ---------------------------------------
-egész emelések száma az adott körben
+Típus   Leírás
+------- ---------------------------------------
+egész   emelések száma az adott körben
 
-valós pot odds
+valós   pot odds
 
-egész játékos pozíciója ^[a játékos asztalnál elfoglalt helyének "jósága". Ez
-      gyakorlatilag azt jelenti, hogy hányadik a játékos a körben.]
+egész   játékos pozíciója
 
-egész a tétszám, amit a játékos megadna^[A tétek maximum száma
-      megállapodás szerinti. Általában a maximum tétszám 4.]
+egész   a tétszám, amit a játékos megadna^[A tétek maximum száma
+        megállapodás szerinti. Általában a maximum tétszám 4.]
 
-bool  befektetett-e a játékos pénzt
+boolean  befektetett-e a játékos pénzt
 
-egész körben még aktív játékosok száma
+egész   körben még aktív játékosok száma
 
-egész jelenlegi kör száma: a kör sorszáma 0-tól 3-ig
+egész   jelenlegi kör száma: a kör sorszáma 0-tól 3-ig
 
-bool  Van-e ász a közös lapok között
+boolean Van-e ász a közös lapok között
 
-bool  Van-e király a közös lapok között
+boolean Van-e király a közös lapok között
 
-bool  Az ellenfél utoljára emelt-e
+boolean Az ellenfél utoljára emelt-e
 ---------------------------------------------
 
 Table: Az ágens által használt jellegfüggvények
@@ -957,12 +1006,12 @@ Nem változtatja a saját játékát, ezért könnyebb dolgunk van, ha meg akarj
 tanulni azt. A tanítópontok száma így kb 2000-re adódott játékosonként.
 
 A kezdeti pontosság kb. 60% volt, azaz a tesztminták 60%-át osztályozta a háló
-helyesen. Ez teljesen naiv paraméterezéssel, és jellemzőkkel történt. Hamar
+helyesen. Ez teljesen naiv paraméterezéssel és jellemzőkkel történt. Hamar
 rájöttem, hogy nem olyan pontos így a mérés. Két különböző tanítás után
 jelentős, akár 4-5%-os különbségek is lehettek a hálók teljesítménye között.
 
 Ennek kiküszöbölésére 7-szeres keresztkiértékelést használtam. A
-tanítópontokat 7 különböző módon felosztva tanító, és tesztmintákra, és az
+tanítópontokat 7 különböző módon felosztva tanító és tesztmintákra, és az
 eredményeket átlagolva már a két mérés között tapasztalható eltérés mindig 1%
 alatt volt.
 
@@ -972,8 +1021,9 @@ alatt volt.
 A scikit-learn egy főleg kezdők által használt library, viszont azért itt is
 viszonylag sok mindent állíthatunk a neurális háló tanításán. A tanítás közben
 a háló méretét, illetve a súlymódosításhoz használt eljárást vizsgáltam. Az
-`lbfgs` és az `adam` két ilyen eljárás. A rétegszám növelése nem jelentette
-automatikusan a tanulás hatékonyságát minden esetben.
+`lbfgs`[@Limitedm93:online] és az `adam`[@DBLP:adam] két
+ilyen eljárás. A rétegszám növelése nem jelentette automatikusan a tanulás
+hatékonyságát minden esetben.
 
 A kísérleteket kettő, kicsit különböző módon játszó Jagboton végeztem el.
 
@@ -988,13 +1038,13 @@ Rejtett rétegek   | Jagbot1/lbfgs | Jagbot2/lbgfs | Jagbot1/adam | Jagbot2/adam
 [14, 11]          | 68.35%        | 73.89%        | 44.39%       | 58.06%
 [16, 12]          | 68.65%        | 74.19%        | 57.43%       | 52.26%
 
-Table: a tanítás hatékonysága különbőző megoldóalgoritmusokkal, és rétegszámokkal
+Table: a tanítás hatékonysága különbőző megoldóalgoritmusokkal és rétegszámokkal
 
 A tanítóeljárások közül az lbfgs-t választottam (Limited-memory
-Broyden–Fletcher–Goldfarb–Shanno algoritmus[@Limitedm93:online]), mivel annak
+Broyden–Fletcher–Goldfarb–Shanno algoritmus), mivel annak
 ellenére, hogy kicsit tovább tart időben, jóval hatékonyabbnak bizonyult a
-többihez képest. Előnye volt továbbá, hogy kevésbé befolyásolta a neuronok
-számának változása, mint a többi eljárást.
+többihez képest. Előnye volt továbbá, hogy a hatékonyságát kevésbé befolyásolta
+a neuronok számának változása, mint a többi eljárásét.
 
 Végül egy darab rejtett réteg mellett döntöttem, 7 neuronnal, mivel a
 teljesítménybeli különbség kicsi ahhoz képest, hogy mennyi időbe kerül
@@ -1003,9 +1053,9 @@ megtanítani a hálót.
 
 #### Konfúziós mátrix
 
-Az ellenfélmodell pontosságának mérésére jó eszköz a konfúziós mátrix. ez a
+Az ellenfélmodell pontosságának mérésére jó eszköz a konfúziós mátrix. Ez a
 metrika megmutatja, hogy a prediktorunk milyen típusú hibákat produkál. Az
-osztályozások eloszlása látható rajta az elvárt, és a tényleges válaszok
+osztályozások eloszlása látható rajta az elvárt és a tényleges válaszok
 kombinációira vetítve[@davidson2000improved]. A mi esetünkben ez egy 3x3-as
 mátrix lesz, ahol ideális esetben csak a főátló értékei nem nullák. Ekkor az
 osztályozást tökéletesen végrehajtottuk.
@@ -1085,7 +1135,7 @@ hogy jobban megfeleljen a céljaimnak. Az alap MCTS lépései[@MonteCar27:online
 
 - Propagálás: A szimuláció eredményét visszaterjesztjük a gyökérig, mégpedig
   úgy, hogy a csúcsok szüleit követjük visszafele. Egy csúcsnak kétféle értéke
-  van: a látogatások száma, és az értéke. Az előbbit eggyel növeljük, az
+  van: a látogatások száma és az értéke. Az előbbit eggyel növeljük, az
   utóbbit pedig annyival, amennyi a szimuláció eredménye.
 
 Az algoritmus nem specifikál több mindent. Az egyik, hogy hogyan választunk a
@@ -1214,14 +1264,15 @@ is függött.
 a rövidebb rolloutok miatt, valamint ha a bedobás mellett döntött, akkor azt
 gyorsan tudta végezni az azonnali kiértékelés miatt.
 
-Kezdetben 2000 iterációt céloztam meg egy döntés elvégzése során. Ez
+Kezdetben 2000 iterációt céloztam meg egy döntés meghozatala során. Ez
 tesztkörnyezetben, azaz külön futtatva az MCTS döntéshozót, és a többi
-komponenst helyettesítve *mock*okkal, még reálisnak tűnt a kevesebb, mint 1
-másodperces döntéseket nézve. Később az éles futtatás közben rájöttem, hogy ezt
-nem lehet tartani, ezért csak feleannyi iterációt állítottam be, és még így is
-jóval tovább tartott egy-egy döntés meghozatala.
+komponenst helyettesítve mockokkal^[Egy osztály viselkedését szimuláló
+objektum.], még reálisnak tűnt, mivel kevesebb, mint egy másodperc alatt futott
+le ennyi iteráció.  Később az éles futtatás közben rájöttem, hogy ezt nem lehet
+tartani, ezért csak feleannyi iterációt állítottam be, és még így is jóval
+tovább tartott egy-egy döntés meghozatala.
 
-A PokerAcademy minden játékoshoz számon tartott statisztikákat, és grafikonokat
+A PokerAcademy minden játékoshoz számon tartott statisztikákat és grafikonokat
 is tudott generálni, így a megjelenítéssel könnyű dolgom volt.
 
 
@@ -1240,9 +1291,9 @@ tudott használni.
 A Jagbot egy szakértői rendszer alapú ágens. Teljesen statikus módon játszik,
 ezért alkalmas arra, hogy a könnyű ellenfél szerepét betöltse.
 
-Az egyik tesztkonfiguráció 4 darab Jagbotból, és az ágensünkből állt. 500
+Az egyik tesztkonfiguráció 4 darab Jagbotból és az ágensünkből állt. 500
 körüli játék után volt látható, hogy valamennyivel gyengébben játszik
-(@fig:jagbots-5max ). Az előbbi asztalnál 0.26 nagyvakot vesztett átlagosan
+(@fig:jagbots-5max . ábra). Az előbbi asztalnál 0.26 nagyvakot vesztett átlagosan
 játékonként. Rajta kívül egy Jagbot volt még veszteséges, és a legjobban játszó
 ágens átlagosan 0.2 nagyvakkal lett gazdagabb játékonként.
 
@@ -1260,7 +1311,7 @@ $\heartsuit A, \clubsuit A$-t bedobott a játék elején, ami a legtöbb esetben
 nem jó döntés.
 
 A tesztelést kipróbáltam egy darab Jagbottal, itt is gyengébbnek bizonyult
-(@fig:jagbot-headsup).
+(@fig:jagbot-headsup . ábra).
 
 ![Az ágens teljesítménye egy Jagbot
 ellen](figures/jagbot-headsup.png){width=65% #fig:jagbot-headsup}
@@ -1300,26 +1351,38 @@ ellen](figures/pokibots-5max.png){width=65% #fig:pokibots-5max}
 ---------
 
 Összességében elmondhatjuk, hogy a többi megismert ágenshez képest nagyon
-egyszerű struktúrával rendelkező játékosunk viszonylag jól teljesít.
-'todo: hogy játszott a Jagbotok, Pokik ellen?'
+egyszerű struktúrával rendelkező játékosunkon még van mit javítani.
 
-Szakértői információt nagyon kevés helyen használ fel, a Loki/Poki-val
-ellentétben a flop előtt sem használ fel ilyen tudást a döntéseihez.
+Fő hiányossága az ellenfél kézerősségének jó becslése a szimulációk végén,
+kiértékeléskor. Ez kritikus, ha azt akarjuk, hogy a szimulációk reálisak
+legyenek.
+
 A Monte Carlo fakeresés egy előrelépést jelent a puszta szimulációhoz képest,
 viszont ennél a módszernél is megoldandó marad az a probléma, hogy mit lépjen a
-saját játékosunk szimuláció közben. Erre szakértői tudás híján az ágens az
-ellenfélmodellekből kap választ.
+saját játékosunk a szimuláció közben. Erre szakértői tudás híján az ágens az
+jelenleg valamelyik más játékos ellenfélmodelléből kap választ.
+
+Ami jó tulajdonsága, hogy szakértői információt nagyon kevés helyen használ fel
+(ami célkitűzés szokott lenni hasonló ágensek tervezésénél). A Loki/Poki-val
+ellentétben a flop előtt sem használ fel ilyen tudást a döntéseihez.
+
+A munkám során a korábban önálló laboron nagyrészt általam megtervezett
+architektúrát valósítottam meg. Az implementáció egésze a sajátom, kivéve a
+felhasznált szimulációs szoftvert és a nevezett librarykat.
+
+A kész ágens, valamint a Java nyelven íródott kliens megtalálható Githubon,
+nyílt forrású szoftverként[@GitHuban99:online; @GitHuban91:online].
+
 
 ### További teendők
 
-Az ágenst számos helyen lehet bővíteni. Az ellenfél lapskáláját sokkal
-pontosabban meg tudná becsülni, ha ehhez figyelembe venné valamilyen módon a
-már megtörtént cselekvéseket egy játék közben. Így a kiértékelések eredménye
-jobban tükrözné a valós esélyeinket.
+Az ágenst számos helyen lehet bővíteni. Elsősorban a kézerősség pontosabb
+becslése segítene a legjobban véleményem szerint.
 
 Az ellenfélmodell másik részén, a cselekvések előrejelzésén is lehetne
 pontosítani: jelenleg csak az ellenfél által végzett utolsó cselekvést vesszük
-figyelembe. Szintén nem nézünk túl sok információt a leosztott lapokról.
+figyelembe az előrejelzéshez. Szintén nem nézünk túl sok információt a
+leosztott lapokról.
 
 A Monte Carlo fakeresést is lehetne optimizálni, az exploration/exploitation
 szempontok szerint. Lehet, hogy jobb eredményt lehetne elérni pusztán a fa
@@ -1327,7 +1390,7 @@ szempontok szerint. Lehet, hogy jobb eredményt lehetne elérni pusztán a fa
 
 Ami a számítások sebességét illeti: a jelenlegi módszer alkalmas arra, hogy
 bemutassa a rendszer működését, viszont sokkal több iterációt is lehetne
-végezni az MCTS közben. Ettől lehet, hogy javulna az előrejelzések pontossága
+végezni a MCTS közben. Ettől lehet, hogy javulna az előrejelzések pontossága
 is.
 
 Hivatkozások
