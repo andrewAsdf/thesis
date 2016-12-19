@@ -108,7 +108,7 @@ Budapest, \today
 
 
 \setcounter{tocdepth}{1}
-\newgeometry{top=2.5cm,bottom=2.5cm}
+\newgeometry{top=2.5cm,bottom=2.5cm, left=4cm, right=3cm}
 \tableofcontents
 \restoregeometry
 
