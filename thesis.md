@@ -81,7 +81,7 @@ olyan részt, melyet szó szerint, vagy azonos értelemben, de átfogalmazva má
 forrásból átvettem, egyértelmûen, a forrás megadásával megjelöltem.
 
 Hozzájárulok, hogy a jelen munkám alapadatait (szerző(k), cím, angol és magyar
-nyelvû tartalmi kivonat, készítés éve, konzulens(ek) neve) a BME VIK
+nyelvű tartalmi kivonat, készítés éve, konzulens(ek) neve) a BME VIK
 nyilvánosan hozzáférhető elektronikus formában, a munka teljes szövegét pedig
 az egyetem belső hálózatán keresztül (vagy autentikált felhasználók számára)
 közzétegye. Kijelentem, hogy a benyújtott munka és annak elektronikus verziója
