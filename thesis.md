@@ -4,11 +4,12 @@ csl: ieee.csl
 fontsize: 11pt
 margin-left:  4cm
 margin-right: 3cm
-margin-top: 3cm
-margin-bottom: 3cm
+margin-top: 4cm
+margin-bottom: 4cm
 linestretch:  1.25
 lang: hu
 babel-lang: magyar
+papersize: a4
 documentclass: report
 figPrefix:
 header-includes:
