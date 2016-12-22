@@ -11,6 +11,7 @@ lang: hu
 babel-lang: magyar
 papersize: a4
 documentclass: report
+classoption: twoside
 figPrefix:
 header-includes:
     - \usepackage{graphicx}
