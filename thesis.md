@@ -80,7 +80,7 @@ Alulírott \emph{Sőre András}, szigorló hallgató kijelentem, hogy ezt a
 szakdolgozatot meg nem engedett segítség nélkül, saját magam készítettem, csak
 a megadott forrásokat (szakirodalom, eszközök stb.) használtam fel. Minden
 olyan részt, melyet szó szerint, vagy azonos értelemben, de átfogalmazva más
-forrásból átvettem, egyértelmûen, a forrás megadásával megjelöltem.
+forrásból átvettem, egyértelműen, a forrás megadásával megjelöltem.
 
 Hozzájárulok, hogy a jelen munkám alapadatait (szerző(k), cím, angol és magyar
 nyelvű tartalmi kivonat, készítés éve, konzulens(ek) neve) a BME VIK
